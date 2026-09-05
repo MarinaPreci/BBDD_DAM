@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bases de Datos (0484) · Portal del curso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #1b1b1b;
+    --bg-alt: #232323;
+    --panel: #292929;
+    --line: #3d3d3d;
+    --ink: #ece9e0;
+    --ink-soft: #a6acc4;
+    --ink-dim: #767c98;
+    --clay: #3acfba;
+    --clay-soft: #a9ecdf;
+    --teal: #49a89c;
+    --teal-soft: #bfe3dd;
+    --maxw: 1180px;
+    --radius: 3px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--clay);color:#12211e;}
+  h1,h2,h3,h4{font-family:'Fraunces',serif; font-weight:700; line-height:1.14; margin:0 0 .5em; letter-spacing:-0.01em;}
+  p{margin:0 0 1em;}
+  a{color:var(--teal-soft); text-decoration:none;}
+  a:hover{color:var(--clay-soft);}
+
+  main{max-width:var(--maxw); margin:0 auto; padding:0 24px;}
+  .kicker{font-family:'Spline Sans Mono',monospace; font-size:18px; color:var(--clay-soft); letter-spacing:.04em; display:block; margin-bottom:14px;}
+  .lede{font-size:1.15rem; color:var(--ink-soft); max-width:640px;}
+
+  header.hero{
+    position:relative; padding:120px 24px 80px; overflow:hidden;
+    border-bottom:1px solid var(--line);
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(58,207,186,.16), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 0%, rgba(73,168,156,.14), transparent 55%);
+  }
+  .hero-inner{max-width:var(--maxw); margin:0 auto; position:relative; z-index:2;}
+  .hero h1{font-size:clamp(2.2rem,5.4vw,4rem); max-width:20ch; color:var(--ink);}
+  .hero h1 em{font-style:italic; color:var(--clay);}
+  .hero .lede{margin-top:20px; font-size:1.2rem;}
+  .hero .byline{margin-top:24px; font-family:'Spline Sans Mono',monospace; font-size:16px; color:var(--ink-dim);}
+
+  section{padding:64px 0;}
+  .sec-label{
+    font-family:'Spline Sans Mono',monospace; font-size:15px; letter-spacing:.05em;
+    text-transform:uppercase; color:var(--ink-dim); display:block; margin-bottom:18px;
+  }
+
+  .plan-card{
+    display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px 30px; margin-bottom:56px;
+  }
+  .plan-card h3{margin-bottom:6px; font-size:1.3rem;}
+  .plan-card p{margin:0; color:var(--ink-soft); max-width:520px;}
+  .btn{
+    font-family:'Spline Sans Mono',monospace; font-size:15px; letter-spacing:.02em;
+    color:#0d211c; background:var(--clay); border-radius:999px; padding:11px 22px;
+    white-space:nowrap; display:inline-block;
+  }
+  .btn:hover{background:var(--clay-soft); color:#0d211c;}
+
+  .unit-list{display:flex; flex-direction:column; gap:16px;}
+  .unit-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px 30px; display:flex; gap:28px; align-items:flex-start; flex-wrap:wrap;
+  }
+  .unit-card.pending{opacity:.6;}
+  .unit-meta{flex:1; min-width:220px;}
+  .unit-tag{
+    font-family:'Spline Sans Mono',monospace; font-size:14.5px; color:var(--ink-dim);
+    letter-spacing:.03em; display:block; margin-bottom:6px;
+  }
+  .unit-card h3{font-size:1.25rem; margin-bottom:0;}
+  .unit-links{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+  .link-pill{
+    font-family:'Spline Sans Mono',monospace; font-size:14.5px;
+    border:1px solid var(--teal-soft); color:var(--teal-soft);
+    border-radius:999px; padding:8px 16px;
+  }
+  .link-pill:hover{background:var(--teal-soft); color:#0d211c;}
+  .pending-pill{
+    font-family:'Spline Sans Mono',monospace; font-size:14.5px;
+    border:1px dashed var(--line); color:var(--ink-dim);
+    border-radius:999px; padding:8px 16px;
+  }
+  .order-num{
+    font-family:'Fraunces',serif; font-weight:700; font-size:1.8rem; color:var(--clay);
+    width:40px; text-align:right; flex-shrink:0;
+  }
+
+  footer{padding:50px 0 80px; border-top:1px solid var(--line); margin-top:40px;}
+  footer p{color:var(--ink-dim); font-size:.98rem; max-width:640px;}
+
+  @media(max-width:640px){
+    .unit-card{flex-direction:column;}
+    .order-num{width:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="kicker">Bases de datos (0484) · 1º DAM bilingüe</span>
+    <h1>Portal del <em>curso</em></h1>
+    <p class="lede">El punto de partida para todo el módulo: aquí se van enlazando la teoría, las actividades y las presentaciones-resumen de cada unidad, a medida que se van construyendo.</p>
+    <p class="byline">Marina Preciados Agapito</p>
+  </div>
+</header>
+
+<main>
+  <section id="programacion">
+    <span class="sec-label">Punto de partida</span>
+    <div class="plan-card">
+      <div>
+        <h3>Programación de Unidades de Trabajo</h3>
+        <p>Las 7 UT, una por RA, con bloques, contenidos y criterios de evaluación oficiales — y el orden de impartición que sigue este portal.</p>
+      </div>
+      <a class="btn" href="programacion.html">Ver programación →</a>
+    </div>
+  </section>
+
+  <section id="unidades">
+    <span class="sec-label">Unidades de trabajo · en orden de impartición</span>
+    <div class="unit-list">
+
+      <div class="unit-card">
+        <span class="order-num">1</span>
+        <div class="unit-meta">
+          <span class="unit-tag">UT1 · RA1 · Bloque B1</span>
+          <h3>Sistemas de almacenamiento de la información</h3>
+        </div>
+        <div class="unit-links">
+          <a class="link-pill" href="ut1/teoria.html">📖 Teoría</a>
+          <a class="link-pill" href="ut1/actividades.html">📝 Actividades</a>
+          <a class="link-pill" href="ut1/resumen.html">🎛️ Resumen</a>
+        </div>
+      </div>
+
+      <div class="unit-card pending">
+        <span class="order-num">2</span>
+        <div class="unit-meta">
+          <span class="unit-tag">UT6 · RA6 · Bloque B6</span>
+          <h3>Interpretación de diagramas entidad/relación</h3>
+        </div>
+        <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
+      </div>
+
+      <div class="unit-card pending">
+        <span class="order-num">3</span>
+        <div class="unit-meta">
+          <span class="unit-tag">UT2 · RA2 · Bloque B2</span>
+          <h3>Bases de datos relacionales</h3>
+        </div>
+        <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
+      </div>
+
+      <div class="unit-card pending">
+        <span class="order-num">4</span>
+        <div class="unit-meta">
+          <span class="unit-tag">UT3 · RA3 · Bloque B3</span>
+          <h3>Realización de consultas</h3>
+        </div>
+        <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
+      </div>
+
+      <div class="unit-card pending">
+        <span class="order-num">5</span>
+        <div class="unit-meta">
+          <span class="unit-tag">UT4 · RA4 · Bloque B4</span>
+          <h3>Tratamiento de datos</h3>
+        </div>
+        <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
+      </div>
+
+      <div class="unit-card pending">
+        <span class="order-num">6</span>
+        <div class="unit-meta">
+          <span class="unit-tag">UT5 · RA5 · Bloque B5</span>
+          <h3>Programación de bases de datos</h3>
+        </div>
+        <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
+      </div>
+
+      <div class="unit-card pending">
+        <span class="order-num">7</span>
+        <div class="unit-meta">
+          <span class="unit-tag">UT7 · RA7 · Bloque B7</span>
+          <h3>Uso de bases de datos no relacionales</h3>
+        </div>
+        <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer>
+  <main style="padding:0;">
+    <p>Portal vivo: cada vez que se termina una unidad nueva, este índice se actualiza con sus enlaces — no hace falta ir a buscar el enlace suelto en el chat. Bases de datos (0484), RD 405/2023 — Marina Preciados Agapito, 1º DAM bilingüe.</p>
+  </main>
+</footer>
+
+</body>
+</html>

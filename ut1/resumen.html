@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UT1 · Resumen — Sistemas de almacenamiento de la información</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15171c;
+  --ink-soft:#4b4f58;
+  --ink-dim:#767c8a;
+  --paper:#ffffff;
+  --stage-bg:#f0ede6;
+  --line:#e7e3da;
+  --blue:#1b39e6;
+  --blue-deep:#0d1a7a;
+  --lilac:#e9c3ef;
+  --mint:#8ed0aa;
+  --mint-deep:#3f9468;
+  --yellow:#ffd23f;
+  --orange:#ff5a2e;
+  --shadow: 0 30px 70px -30px rgba(20,20,30,.35);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--stage-bg);
+  color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  padding:28px 16px;
+}
+h1,h2,h3,h4{font-family:'Baloo 2','Poppins',system-ui,sans-serif;margin:0;letter-spacing:-0.01em;text-wrap:balance;}
+p{margin:0;}
+a{color:inherit;}
+
+#deck-app{width:100%;max-width:1200px;display:flex;flex-direction:column;align-items:center;gap:14px;}
+
+/* ============ toolbar ============ */
+.toolbar{
+  width:100%;
+  max-width:1160px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  font-family:'Inter',sans-serif;
+}
+.toolbar-group{display:flex;align-items:center;gap:8px;}
+.toolbar-title{
+  font-family:'Baloo 2',sans-serif;
+  font-weight:700;
+  font-size:16px;
+  color:var(--ink-soft);
+}
+.tb-btn{
+  appearance:none;border:2px solid var(--ink);background:var(--paper);color:var(--ink);
+  font-family:'Baloo 2',sans-serif;font-weight:700;font-size:15px;
+  padding:8px 14px;border-radius:999px;cursor:pointer;line-height:1;
+  transition:transform .12s ease, background .12s ease, color .12s ease;
+}
+.tb-btn:hover{transform:translateY(-2px);}
+.tb-btn.active{background:var(--ink);color:var(--paper);}
+.tb-btn:focus-visible{outline:3px solid var(--blue);outline-offset:2px;}
+.lang-group{display:flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden;}
+.lang-group .tb-btn{border:none;border-radius:0;padding:8px 16px;}
+.lang-group .tb-btn+.tb-btn{border-left:2px solid var(--ink);}
+
+/* ============ stage ============ */
+.stage-wrap{
+  width:100%;
+  max-width:1160px;
+  aspect-ratio:16/9;
+  position:relative;
+}
+.stage{
+  position:absolute;inset:0;
+  background:var(--paper);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  border:1px solid var(--line);
+}
+.stage:fullscreen{border-radius:0;max-width:none;}
+.stage:fullscreen .slide{padding:5vw 6vw;}
+
+.slide{
+  position:absolute;inset:0;
+  display:none;
+  padding:56px 64px;
+  overflow:hidden;
+}
+.slide.is-active{display:block;}
+.slide-inner{
+  position:relative;z-index:2;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:18px;
+  max-width:980px;
+}
+.eyebrow{
+  font-family:'Baloo 2',sans-serif;font-weight:700;
+  font-size:clamp(14px,1.6vw,18px);
+  color:var(--blue-deep);
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.slide h2{font-size:clamp(26px,3.6vw,44px);line-height:1.08;font-weight:800;max-width:16ch;}
+.slide .mega{font-size:clamp(34px,6vw,72px);line-height:1.02;font-weight:800;}
+.lede-lg{font-size:clamp(16px,1.9vw,22px);color:var(--ink-soft);max-width:62ch;line-height:1.5;}
+.note{font-size:clamp(15px,1.6vw,18px);color:var(--ink-soft);max-width:66ch;line-height:1.55;}
+.byline{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:clamp(16px,1.8vw,20px);color:var(--ink-soft);}
+
+/* ============ deco shapes ============ */
+.deco-corner{position:absolute;z-index:1;pointer-events:none;}
+.deco-a{width:230px;height:230px;top:-70px;right:-70px;border-radius:50%;background:var(--blue);}
+.deco-b{width:160px;height:160px;bottom:-50px;left:-50px;background:var(--lilac);clip-path:polygon(0 100%,0 0,100% 100%);}
+
+.slide[data-deco="2"] .deco-a{background:var(--yellow);top:-90px;left:-90px;right:auto;border-radius:50%;}
+.slide[data-deco="2"] .deco-b{display:none;}
+
+.slide[data-deco="3"] .deco-a{width:210px;height:210px;top:-60px;right:-60px;border-radius:50%;border:38px solid var(--blue);background:transparent;}
+.slide[data-deco="3"] .deco-b{width:130px;height:130px;bottom:-40px;left:-40px;background:var(--mint);clip-path:polygon(0 0,100% 100%,0 100%);}
+
+.slide[data-deco="4"] .deco-a{width:200px;height:200px;bottom:-70px;right:-70px;top:auto;border-radius:50%;background:var(--orange);}
+.slide[data-deco="4"] .deco-b{width:150px;height:150px;top:-50px;left:-50px;bottom:auto;background:var(--lilac);clip-path:polygon(100% 0,0 0,100% 100%);}
+
+.slide[data-deco="5"] .deco-a{width:220px;height:220px;top:-80px;left:-80px;right:auto;border-radius:50%;background:var(--mint);}
+.slide[data-deco="5"] .deco-b{width:120px;height:120px;bottom:-40px;right:-40px;left:auto;background:var(--yellow);clip-path:polygon(0 0,100% 0,100% 100%);}
+
+.slide[data-deco="6"] .deco-a{width:200px;height:200px;top:-70px;right:-70px;border-radius:50%;background:var(--lilac);}
+.slide[data-deco="6"] .deco-b{width:170px;height:170px;bottom:-60px;left:-60px;background:var(--blue);clip-path:polygon(0 0,100% 100%,0 100%);}
+
+.slide[data-deco="title"] .deco-a{width:340px;height:340px;top:-110px;right:-110px;border-radius:50%;background:var(--blue);}
+.slide[data-deco="title"] .deco-b{width:230px;height:230px;bottom:-70px;left:-70px;background:var(--lilac);clip-path:polygon(0 100%,0 0,100% 100%);}
+.slide.slide-title .slide-inner{gap:22px;}
+
+.slide[data-deco="activity"] .deco-a{width:260px;height:260px;top:-90px;left:-90px;right:auto;border-radius:50%;background:var(--orange);opacity:.16;}
+.activity-inner{align-items:flex-start;}
+.activity-badge{
+  width:64px;height:64px;border-radius:50%;background:var(--orange);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Baloo 2',sans-serif;font-weight:800;font-size:30px;
+  box-shadow:0 14px 30px -10px rgba(255,90,46,.55);
+}
+
+.slide[data-deco="repaso"] .deco-a{width:280px;height:280px;top:-100px;left:-100px;right:auto;border-radius:50%;background:var(--yellow);opacity:.5;}
+
+/* ============ content components ============ */
+.index-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 34px;}
+.index-list li{display:flex;align-items:baseline;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);}
+.ix-num{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:20px;color:var(--blue);}
+.ix-txt{font-size:16px;color:var(--ink-soft);}
+
+.chain{display:flex;align-items:stretch;gap:14px;flex-wrap:wrap;}
+.chain-step{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:16px 18px;min-width:190px;flex:1;}
+.chain-tag{display:inline-block;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:13px;letter-spacing:.05em;color:var(--blue-deep);margin-bottom:8px;}
+.chain-step p{font-size:16px;font-weight:600;}
+.chain-arrow{align-self:center;font-size:28px;color:var(--ink-dim);}
+
+.pillbox{display:flex;flex-wrap:wrap;gap:10px;}
+.pill,.pill-lg{
+  display:inline-flex;align-items:center;
+  border:2px solid var(--ink);border-radius:999px;
+  font-family:'Baloo 2',sans-serif;font-weight:600;
+  background:var(--paper);
+}
+.pill{padding:8px 16px;font-size:14px;}
+.pill-lg{padding:12px 20px;font-size:16px;}
+
+.tl-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.tl-row-4{grid-template-columns:repeat(4,1fr);}
+.tl-card{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:16px 18px;}
+.tl-year{display:inline-block;font-family:'Spline Sans Mono',monospace;font-weight:600;font-size:13px;color:var(--blue-deep);background:rgba(27,57,230,.09);border-radius:999px;padding:3px 10px;margin-bottom:10px;}
+.tl-card h4{font-size:17px;margin-bottom:6px;line-height:1.2;}
+.tl-card p{font-size:13.5px;color:var(--ink-soft);line-height:1.4;}
+
+.cards{display:grid;gap:14px;}
+.cards-2{grid-template-columns:repeat(2,1fr);}
+.cards-4{grid-template-columns:repeat(4,1fr);}
+.cards-5{grid-template-columns:repeat(5,1fr);}
+.card{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:16px 18px;}
+.card.small{padding:14px 16px;}
+.card .tag{display:inline-block;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12px;letter-spacing:.04em;color:var(--blue-deep);background:rgba(27,57,230,.09);border-radius:999px;padding:3px 10px;margin-bottom:10px;}
+.card h4{font-size:16px;margin-bottom:6px;line-height:1.2;}
+.card p{font-size:13.5px;color:var(--ink-soft);line-height:1.42;}
+.card.sql-card{text-align:center;}
+.code-mini{font-family:'Spline Sans Mono',monospace!important;font-size:12px!important;background:var(--ink);color:#eef;border-radius:8px;padding:8px 6px;margin-top:8px;}
+
+.gloss-grid .card, .gloss-grid .gloss-item{background:var(--paper);}
+.gloss-item{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:16px 18px;}
+.gloss-item h4{font-size:15.5px;margin-bottom:6px;}
+.gloss-item p{font-size:13px;color:var(--ink-soft);line-height:1.4;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:34px;}
+.col-h{display:block;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:15px;letter-spacing:.02em;text-transform:uppercase;color:var(--ink);margin-bottom:10px;}
+.col-h-good{color:var(--mint-deep);}
+.col-h-bad{color:var(--orange);}
+.check-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.check-list li{display:flex;align-items:flex-start;gap:8px;font-size:14.5px;color:var(--ink-soft);}
+.check-icon{color:var(--mint-deep);font-weight:800;}
+.x-icon{color:var(--orange);font-weight:800;}
+.problem-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;}
+.problem-list li{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600;}
+
+.acid-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.acid-cell{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:18px;text-align:center;}
+.acid-cell .letter{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:20px;margin-bottom:10px;}
+.acid-cell h4{font-size:15px;margin-bottom:6px;}
+.acid-cell p{font-size:12.5px;color:var(--ink-soft);line-height:1.4;}
+
+.arch{display:flex;flex-direction:column;gap:10px;}
+.arch-layer{border-radius:14px;padding:16px 20px;display:flex;flex-direction:column;gap:4px;color:#fff;}
+.arch-layer .lbl{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13px;letter-spacing:.03em;}
+.arch-layer span:last-child{font-size:14px;opacity:.92;}
+.arch-layer.ext{background:var(--blue);}
+.arch-layer.con{background:var(--blue-deep);}
+.arch-layer.int{background:var(--ink);}
+
+.vendor-row{display:flex;flex-wrap:wrap;gap:10px;}
+.vendor-chip{font-family:'Spline Sans Mono',monospace;font-size:13px;font-weight:600;border:2px solid var(--ink);border-radius:10px;padding:8px 14px;background:var(--paper);}
+
+.code{
+  font-family:'Spline Sans Mono',monospace;font-size:13.5px;line-height:1.7;
+  background:var(--ink);color:#e9ecf7;border-radius:14px;padding:16px 20px;
+  white-space:pre-wrap;margin-top:10px;
+}
+.code .kw{color:#8fd0aa;font-weight:600;}
+.code .cm{color:#9aa1b8;}
+
+.repaso-inner{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:center;height:100%;padding-top:6px;}
+.repaso-text h2{margin-bottom:2px;}
+.wheel-wrap{position:relative;display:flex;align-items:center;justify-content:center;grid-row:1;grid-column:2;}
+.wheel{
+  width:180px;height:180px;border-radius:50%;
+  background:conic-gradient(var(--blue) 0 10%, var(--orange) 10% 20%, var(--yellow) 20% 30%, var(--mint) 30% 40%, var(--lilac) 40% 50%, var(--blue-deep) 50% 60%, var(--blue) 60% 70%, var(--orange) 70% 80%, var(--yellow) 80% 90%, var(--mint) 90% 100%);
+  border:6px solid var(--ink);
+  animation:spin 26s linear infinite;
+}
+.wheel-pointer{position:absolute;left:-30px;font-size:22px;color:var(--ink);}
+@keyframes spin{to{transform:rotate(360deg);}}
+.repaso-list{grid-column:1/-1;list-style:decimal;margin:0;padding-left:20px;columns:2;column-gap:30px;font-size:12.5px;color:var(--ink-soft);line-height:1.7;}
+
+.final-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;counter-reset:fin;}
+.final-list li{counter-increment:fin;position:relative;padding-left:30px;font-size:15.5px;color:var(--ink-soft);line-height:1.4;}
+.final-list li::before{content:counter(fin);position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.credits{margin-top:8px;font-size:11.5px;color:var(--ink-dim);max-width:70ch;line-height:1.5;}
+
+/* ============ bilingual toggle (self-contained wrapper, not <html>) ============ */
+[data-i18n]{display:none;}
+#deck-app[data-lang="es"] [data-i18n="es"]{display:revert;}
+#deck-app[data-lang="en"] [data-i18n="en"]{display:revert;}
+#deck-app[data-lang="es"] span[data-i18n="es"],
+#deck-app[data-lang="en"] span[data-i18n="en"]{display:inline;}
+
+/* ============ nav row ============ */
+.nav-row{
+  width:100%;max-width:1160px;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+}
+.nav-btn{
+  appearance:none;border:2px solid var(--ink);background:var(--paper);color:var(--ink);
+  width:46px;height:46px;border-radius:50%;font-size:20px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .12s ease, background .12s ease, color .12s ease;
+}
+.nav-btn:hover{background:var(--ink);color:#fff;transform:translateY(-2px);}
+.nav-btn:disabled{opacity:.3;cursor:default;transform:none;background:var(--paper);color:var(--ink);}
+.nav-btn:focus-visible{outline:3px solid var(--blue);outline-offset:2px;}
+.progress-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.progress-track{width:100%;height:6px;border-radius:999px;background:var(--line);overflow:hidden;}
+.progress-fill{height:100%;background:var(--blue);border-radius:999px;transition:width .25s ease;}
+.slide-counter{font-family:'Spline Sans Mono',monospace;font-size:13px;color:var(--ink-dim);}
+.hint{font-size:12px;color:var(--ink-dim);text-align:center;}
+
+@media (max-width:760px){
+  .slide{padding:34px 26px;}
+  .cards-4,.cards-5{grid-template-columns:repeat(2,1fr);}
+  .tl-row,.tl-row-4{grid-template-columns:1fr;}
+  .index-list{grid-template-columns:1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .acid-grid{grid-template-columns:repeat(2,1fr);}
+  .repaso-inner{grid-template-columns:1fr;}
+  .wheel-wrap{grid-row:auto;grid-column:auto;}
+  .repaso-list{columns:1;}
+}
+</style>
+
+<style>
+  .site-nav{
+    position:fixed; top:0; left:0; right:0; z-index:999;
+    display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+    background:rgba(15,15,15,.92); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line, #3d3d3d);
+    padding:10px 20px;
+    font-family:'Spline Sans Mono',monospace;
+    font-size:14px;
+  }
+  .site-nav a{
+    color:var(--ink-dim, #767c98); text-decoration:none; padding:4px 2px;
+  }
+  .site-nav a:hover{color:var(--clay-soft, #a9ecdf);}
+  .site-nav a.active{color:var(--clay, #3acfba); font-weight:600;}
+  .site-nav .sep{color:var(--line, #3d3d3d);}
+  body{padding-top:44px;}
+  nav.toc{top:44px;}
+</style>
+</head>
+<body><nav class="site-nav"><a href="../index.html">← Portal</a><span class="sep">|</span><a href="teoria.html">Teoría</a><a href="actividades.html">Actividades</a><a href="resumen.html" class="active">Resumen</a></nav>
+
+<div id="deck-app" data-lang="es">
+
+  <div class="toolbar">
+    <span class="toolbar-title">UT1 · <span data-i18n="es">Resumen de apoyo</span><span data-i18n="en">Teaching support summary</span></span>
+    <div class="toolbar-group">
+      <div class="lang-group" role="group" aria-label="Idioma / Language">
+        <button type="button" class="tb-btn active" id="btn-es" onclick="setLang('es')">ES</button>
+        <button type="button" class="tb-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      </div>
+      <button type="button" class="tb-btn" id="btn-fs" onclick="toggleFullscreen()">⛶ <span data-i18n="es">Pantalla completa</span><span data-i18n="en">Fullscreen</span></button>
+    </div>
+  </div>
+
+  <div class="stage-wrap">
+    <div class="stage" id="stage">
+<section class="slide slide-title" data-deco="title">
+  <div class="deco-corner deco-a"></div>
+  <div class="deco-corner deco-b"></div>
+  <div class="slide-inner title-slide">
+    <span class="eyebrow"><span data-i18n="es">UT1 · Base de datos · 1º DAM bilingüe</span><span data-i18n="en">Unit 1 · Databases · 1st year DAM bilingual programme</span></span>
+    <h1 class="mega"><span data-i18n="es">Sistemas de<br>almacenamiento<br>de la información</span><span data-i18n="en">Information<br>storage<br>systems</span></h1>
+    <p class="byline">Marina Preciados Agapito</p>
+  </div>
+</section>
+<section class="slide " data-deco="2">
+  <div class="deco-corner deco-a"></div>
+  <div class="slide-inner">
+    <span class="eyebrow"><span data-i18n="es">Índice</span><span data-i18n="en">Contents</span></span>
+    <h2><span data-i18n="es">Lo que vamos a ver</span><span data-i18n="en">What we'll cover</span></h2>
+    <ol class="index-list"><li><span class="ix-num">01</span><span class="ix-txt"><span data-i18n="es">Dato, información y sistema de información</span><span data-i18n="en">Data, information & information systems</span></span></li>
+<li><span class="ix-num">02</span><span class="ix-txt"><span data-i18n="es">La evolución del almacenamiento</span><span data-i18n="en">The evolution of storage</span></span></li>
+<li><span class="ix-num">03</span><span class="ix-txt"><span data-i18n="es">Ficheros: la solución anterior a la BD</span><span data-i18n="en">Files: the solution before databases</span></span></li>
+<li><span class="ix-num">04</span><span class="ix-txt"><span data-i18n="es">Qué es una base de datos</span><span data-i18n="en">What a database is</span></span></li>
+<li><span class="ix-num">05</span><span class="ix-txt"><span data-i18n="es">Tipos y modelos de datos</span><span data-i18n="en">Types and data models</span></span></li>
+<li><span class="ix-num">06</span><span class="ix-txt"><span data-i18n="es">El sistema gestor de bases de datos (SGBD)</span><span data-i18n="en">The database management system (DBMS)</span></span></li>
+<li><span class="ix-num">07</span><span class="ix-txt"><span data-i18n="es">SQL y sus cuatro sublenguajes</span><span data-i18n="en">SQL and its four sub-languages</span></span></li>
+<li><span class="ix-num">08</span><span class="ix-txt"><span data-i18n="es">Legislación sobre protección de datos</span><span data-i18n="en">Data protection legislation</span></span></li>
+<li><span class="ix-num">09</span><span class="ix-txt"><span data-i18n="es">Dónde vive una base de datos</span><span data-i18n="en">Where a database lives</span></span></li></ol>
+  </div>
+</section>
+<section class="slide " data-deco="3">
+  <div class="deco-corner deco-a"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">01 — <span data-i18n="es">Dato, información y sistema de información</span><span data-i18n="en">Data, information & information systems</span></span>
+    <h2><span data-i18n="es">De un dato suelto a una decisión</span><span data-i18n="en">From a bare fact to a decision</span></h2>
+    <div class="chain">
+      <div class="chain-step"><span class="chain-tag"><span data-i18n="es">DATO</span><span data-i18n="en">DATUM</span></span><p>22 ºC</p></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="chain-tag"><span data-i18n="es">INFORMACIÓN</span><span data-i18n="en">INFORMATION</span></span><p><span data-i18n="es">22 ºC en Sevilla el 15 de julio</span><span data-i18n="en">22 °C in Seville, July 15th</span></p></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="chain-tag"><span data-i18n="es">CONOCIMIENTO</span><span data-i18n="en">KNOWLEDGE</span></span><p><span data-i18n="es">“Hace calor, riego las plantas”</span><span data-i18n="en">“It’s hot — water the plants”</span></p></div>
+    </div>
+    <p class="note"><span data-i18n="es">Un <strong>dato</strong> es un hecho registrado. La <strong>información</strong> es ese dato ya procesado y con contexto. Cuando se usa para decidir, se convierte en <strong>conocimiento</strong>.</span><span data-i18n="en">A <strong>datum</strong> is a recorded fact. <strong>Information</strong> is that data once processed and given context. Used to decide something, it becomes <strong>knowledge</strong>.</span></p>
+  </div>
+</section>
+<section class="slide " data-deco="4">
+  <div class="deco-corner deco-a"></div>
+  <div class="deco-corner deco-b"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">01 — <span data-i18n="es">Sistema de información</span><span data-i18n="en">Information system</span></span>
+    <h2><span data-i18n="es">Toda empresa opera sobre uno</span><span data-i18n="en">Every company runs on one</span></h2>
+    <p class="lede-lg"><span data-i18n="es">Un conjunto organizado de elementos —informatizados o no— para tratar y administrar datos y cubrir una necesidad concreta.</span><span data-i18n="en">An organised set of elements — computerised or not — that processes and manages data to meet a specific need.</span></p>
+    <div class="pillbox">
+      <span class="pill-lg"><span data-i18n="es">¿Repongo un producto?</span><span data-i18n="en">Restock a product?</span></span>
+      <span class="pill-lg"><span data-i18n="es">¿Lanzo una oferta?</span><span data-i18n="en">Launch an offer?</span></span>
+      <span class="pill-lg"><span data-i18n="es">¿Contrato a alguien?</span><span data-i18n="en">Hire someone?</span></span>
+    </div>
+  </div>
+</section>
+<section class="slide " data-deco="5">
+  <div class="deco-corner deco-a"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">02 — <span data-i18n="es">La evolución del almacenamiento (I)</span><span data-i18n="en">The evolution of storage (I)</span></span>
+    <h2><span data-i18n="es">De la arcilla al disco magnético</span><span data-i18n="en">From clay to the magnetic disk</span></h2>
+    <div class="tl-row"><div class="tl-card"><span class="tl-year"><span data-i18n="es">≈3000 a.C.</span><span data-i18n="en">≈3000 BCE</span></span><h4><span data-i18n="es">Tablillas de arcilla</span><span data-i18n="en">Clay tablets</span></h4><p><span data-i18n="es">Documentación económica cuneiforme en Mesopotamia: el primer registro de la necesidad humana de guardar datos.</span><span data-i18n="en">Cuneiform economic records from Mesopotamia — the earliest known way of keeping data long-term.</span></p></div>
+<div class="tl-card"><span class="tl-year"><span data-i18n="es">1950</span><span data-i18n="en">1950</span></span><h4><span data-i18n="es">Cintas magnéticas</span><span data-i18n="en">Magnetic tape</span></h4><p><span data-i18n="es">Sólo lectura secuencial: para llegar a un registro hay que recorrer todos los anteriores. Mucha redundancia.</span><span data-i18n="en">Sequential access only: reaching a record means passing through every one before it. Heavy redundancy.</span></p></div>
+<div class="tl-card"><span class="tl-year"><span data-i18n="es">1960</span><span data-i18n="en">1960</span></span><h4><span data-i18n="es">Discos + jerárquico / en red</span><span data-i18n="en">Disks + hierarchical / network</span></h4><p><span data-i18n="es">El acceso directo generaliza el disco. Nacen las BD jerárquicas (árbol) y en red (muchos-a-muchos).</span><span data-i18n="en">Direct access makes the disk standard. Hierarchical (tree) and network (many-to-many) databases appear.</span></p></div></div>
+  </div>
+</section>
+<section class="slide " data-deco="6">
+  <div class="deco-corner deco-a"></div>
+  <div class="deco-corner deco-b"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">02 — <span data-i18n="es">La evolución del almacenamiento (II)</span><span data-i18n="en">The evolution of storage (II)</span></span>
+    <h2><span data-i18n="es">Del modelo relacional al Big Data</span><span data-i18n="en">From the relational model to Big Data</span></h2>
+    <div class="tl-row tl-row-4"><div class="tl-card"><span class="tl-year"><span data-i18n="es">1970</span><span data-i18n="en">1970</span></span><h4><span data-i18n="es">Modelo relacional</span><span data-i18n="en">Relational model</span></h4><p><span data-i18n="es">Edgar F. Codd (IBM): tablas bidimensionales relacionadas entre sí. El modelo más extendido hoy.</span><span data-i18n="en">Edgar F. Codd (IBM): two-dimensional tables linked together. Still the most widely used model.</span></p></div>
+<div class="tl-card"><span class="tl-year"><span data-i18n="es">1980</span><span data-i18n="en">1980</span></span><h4><span data-i18n="es">DB2 y nace SQL</span><span data-i18n="en">DB2 and SQL is born</span></h4><p><span data-i18n="es">IBM lanza DB2 y crea SQL, el lenguaje de consultas que sigue dominando las BD relacionales.</span><span data-i18n="en">IBM releases DB2 and creates SQL, the query language that still dominates relational databases.</span></p></div>
+<div class="tl-card"><span class="tl-year"><span data-i18n="es">1990</span><span data-i18n="en">1990</span></span><h4><span data-i18n="es">Distribuidas y orientadas a objetos</span><span data-i18n="en">Distributed & object-oriented</span></h4><p><span data-i18n="es">Grandes BD repartidas entre servidores (Facebook). Se añaden objetos, imágenes, voz.</span><span data-i18n="en">Huge databases split across servers (Facebook). Objects, images and voice get added.</span></p></div>
+<div class="tl-card"><span class="tl-year"><span data-i18n="es">2000 →</span><span data-i18n="en">2000 →</span></span><h4><span data-i18n="es">Multidimensional, NoSQL y Big Data</span><span data-i18n="en">Multidimensional, NoSQL & Big Data</span></h4><p><span data-i18n="es">Data Warehouse y OLAP; el Big Data trae NoSQL — clave-valor, documental, grafos, columnar.</span><span data-i18n="en">Data Warehousing and OLAP; the Big Data boom brings NoSQL — key-value, document, graph, column-based.</span></p></div></div>
+  </div>
+</section>
+<section class="slide " data-deco="activity">
+  <div class="deco-corner deco-a deco-activity"></div>
+  <div class="slide-inner activity-inner">
+    <span class="activity-badge">!</span>
+    <span class="eyebrow"><span data-i18n="es">Actividad</span><span data-i18n="en">Activity</span></span>
+    <h2><span data-i18n="es">¿Qué modelo usarías?</span><span data-i18n="en">Which model would you use?</span></h2>
+    <p class="lede-lg"><span data-i18n="es">Piensa en una red social, un banco y el registro de Windows. ¿Qué modelo de datos encaja mejor en cada caso: jerárquico, en red, relacional o NoSQL? Razona tu respuesta.</span><span data-i18n="en">Think of a social network, a bank, and the Windows registry. Which data model fits each best: hierarchical, network, relational or NoSQL? Justify your answer.</span></p>
+  </div>
+</section>
+<section class="slide " data-deco="3">
+  <div class="deco-corner deco-a"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">03 — <span data-i18n="es">Ficheros: la solución anterior a la BD</span><span data-i18n="en">Files: the solution before databases</span></span>
+    <h2><span data-i18n="es">Dos maneras de clasificar un fichero</span><span data-i18n="en">Two ways to classify a file</span></h2>
+    <div class="cards cards-2">
+      <div class="card"><span class="tag"><span data-i18n="es">TEXTO PLANO</span><span data-i18n="en">PLAIN TEXT</span></span><p><span data-i18n="es">Legible en cualquier editor: .txt, .csv, .html, .sql.</span><span data-i18n="en">Readable in any editor: .txt, .csv, .html, .sql.</span></p></div>
+      <div class="card"><span class="tag"><span data-i18n="es">BINARIO</span><span data-i18n="en">BINARY</span></span><p><span data-i18n="es">Sólo legible con la aplicación adecuada: .exe, .pdf, .docx, .jpg.</span><span data-i18n="en">Only readable with the right app: .exe, .pdf, .docx, .jpg.</span></p></div>
+      <div class="card"><span class="tag"><span data-i18n="es">ACCESO SECUENCIAL</span><span data-i18n="en">SEQUENTIAL ACCESS</span></span><p><span data-i18n="es">Hay que recorrer todos los registros anteriores (cinta).</span><span data-i18n="en">You must pass through every earlier record (tape).</span></p></div>
+      <div class="card"><span class="tag"><span data-i18n="es">ACCESO DIRECTO</span><span data-i18n="en">DIRECT ACCESS</span></span><p><span data-i18n="es">Se salta directo al registro que interesa (SSD/NVMe).</span><span data-i18n="en">Jump straight to the record you need (SSD/NVMe).</span></p></div>
+    </div>
+  </div>
+</section>
+<section class="slide " data-deco="4">
+  <div class="deco-corner deco-a"></div>
+  <div class="deco-corner deco-b"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">03 — <span data-i18n="es">Los problemas de los ficheros</span><span data-i18n="en">The problems with files</span></span>
+    <h2><span data-i18n="es">Cada aplicación, su propio fichero</span><span data-i18n="en">Every application, its own file</span></h2>
+    <p class="lede-lg"><span data-i18n="es">RRHH y contabilidad guardaban cada uno un fichero distinto con los datos de los empleados. Esto generaba cuatro problemas recurrentes:</span><span data-i18n="en">HR and accounting each kept a separate file with employee data. This created four recurring problems:</span></p>
+    <ul class="problem-list"><li><span class="x-icon">✕</span><span data-i18n="es">Redundancia de datos</span><span data-i18n="en">Data redundancy</span></li>
+<li><span class="x-icon">✕</span><span data-i18n="es">Mal aprovechamiento del espacio</span><span data-i18n="en">Wasted storage space</span></li>
+<li><span class="x-icon">✕</span><span data-i18n="es">Inconsistencia entre ficheros</span><span data-i18n="en">Inconsistency between files</span></li>
+<li><span class="x-icon">✕</span><span data-i18n="es">Aislamiento de la información</span><span data-i18n="en">Isolated information</span></li></ul>
+  </div>
+</section>
+<section class="slide " data-deco="5">
+  <div class="deco-corner deco-a"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">04 — <span data-i18n="es">Qué es una base de datos</span><span data-i18n="en">What a database is</span></span>
+    <h2><span data-i18n="es">Datos interrelacionados, integridad, redundancia mínima</span><span data-i18n="en">Interrelated data, integrity, minimal redundancy</span></h2>
+    <p class="lede-lg"><span data-i18n="es">Conjunto de datos organizados en ficheros binarios, accesibles por varios usuarios y aplicaciones a la vez.</span><span data-i18n="en">A set of data organised in binary files, accessible to several users and applications at the same time.</span></p>
+    <div class="two-col">
+      <div><span class="col-h col-h-good"><span data-i18n="es">Ventajas</span><span data-i18n="en">Advantages</span></span><ul class="check-list"><li><span class="check-icon">✓</span><span data-i18n="es">Independencia entre datos y programas</span><span data-i18n="en">Independence between data and programs</span></li>
+<li><span class="check-icon">✓</span><span data-i18n="es">Menor redundancia</span><span data-i18n="en">Less redundancy</span></li>
+<li><span class="check-icon">✓</span><span data-i18n="es">Integridad de los datos</span><span data-i18n="en">Data integrity</span></li>
+<li><span class="check-icon">✓</span><span data-i18n="es">Mayor seguridad</span><span data-i18n="en">Greater security</span></li>
+<li><span class="check-icon">✓</span><span data-i18n="es">Acceso simultáneo de varios usuarios</span><span data-i18n="en">Simultaneous access by several users</span></li></ul></div>
+      <div><span class="col-h col-h-bad"><span data-i18n="es">Inconvenientes</span><span data-i18n="en">Drawbacks</span></span><ul class="check-list"><li><span class="x-icon">✕</span><span data-i18n="es">Instalación costosa</span><span data-i18n="en">Costly to set up</span></li>
+<li><span class="x-icon">✕</span><span data-i18n="es">Requiere personal cualificado</span><span data-i18n="en">Requires skilled staff</span></li>
+<li><span class="x-icon">✕</span><span data-i18n="es">Implantación larga y costosa</span><span data-i18n="en">Long, costly rollout</span></li></ul></div>
+    </div>
+  </div>
+</section>
+<section class="slide " data-deco="6">
+  <div class="deco-corner deco-a"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">04 — <span data-i18n="es">Elementos de una base de datos (I)</span><span data-i18n="en">Elements of a database (I)</span></span>
+    <h2><span data-i18n="es">El vocabulario básico</span><span data-i18n="en">The core vocabulary</span></h2>
+    <div class="cards cards-4 gloss-grid"><div class="gloss-item"><h4><span data-i18n="es">Dato</span><span data-i18n="en">Data</span></h4><p><span data-i18n="es">1996 como año de nacimiento.</span><span data-i18n="en">1996 as a year of birth.</span></p></div>
+<div class="gloss-item"><h4><span data-i18n="es">Campo / columna</span><span data-i18n="en">Field / column</span></h4><p><span data-i18n="es">Ej.: el campo FechaNacimiento.</span><span data-i18n="en">E.g. the BirthDate field.</span></p></div>
+<div class="gloss-item"><h4><span data-i18n="es">Registro / tupla / fila</span><span data-i18n="en">Record / tuple / row</span></h4><p><span data-i18n="es">Todos los datos de una persona.</span><span data-i18n="en">All the data belonging to one person.</span></p></div>
+<div class="gloss-item"><h4><span data-i18n="es">Clave primaria (PK)</span><span data-i18n="en">Primary key (PK)</span></h4><p><span data-i18n="es">Identifica de forma única cada registro.</span><span data-i18n="en">Uniquely identifies each record.</span></p></div></div>
+  </div>
+</section>
+<section class="slide " data-deco="1">
+  <div class="deco-corner deco-a"></div>
+  <div class="deco-corner deco-b"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">04 — <span data-i18n="es">Elementos de una base de datos (II)</span><span data-i18n="en">Elements of a database (II)</span></span>
+    <h2><span data-i18n="es">Tabla, consulta, índice, vista, esquema</span><span data-i18n="en">Table, query, index, view, schema</span></h2>
+    <div class="cards cards-5 gloss-grid"><div class="gloss-item"><h4><span data-i18n="es">Tabla</span><span data-i18n="en">Table</span></h4><p><span data-i18n="es">Todos los clientes → tabla Clientes.</span><span data-i18n="en">Every customer → the Customers table.</span></p></div>
+<div class="gloss-item"><h4><span data-i18n="es">Consulta / query</span><span data-i18n="en">Query</span></h4><p><span data-i18n="es">Pide datos que cumplan ciertos criterios.</span><span data-i18n="en">Requests data that meets certain criteria.</span></p></div>
+<div class="gloss-item"><h4><span data-i18n="es">Índice</span><span data-i18n="en">Index</span></h4><p><span data-i18n="es">Ordena campos para buscar más rápido.</span><span data-i18n="en">Orders fields to search faster.</span></p></div>
+<div class="gloss-item"><h4><span data-i18n="es">Vista</span><span data-i18n="en">View</span></h4><p><span data-i18n="es">Tabla virtual generada por una consulta.</span><span data-i18n="en">A virtual table generated by a query.</span></p></div>
+<div class="gloss-item"><h4><span data-i18n="es">Esquema</span><span data-i18n="en">Schema</span></h4><p><span data-i18n="es">Tablas, campos y relaciones de la BD.</span><span data-i18n="en">The database's tables, fields and relationships.</span></p></div></div>
+  </div>
+</section>
+<section class="slide " data-deco="activity">
+  <div class="deco-corner deco-a deco-activity"></div>
+  <div class="slide-inner activity-inner">
+    <span class="activity-badge">!</span>
+    <span class="eyebrow"><span data-i18n="es">Actividad</span><span data-i18n="en">Activity</span></span>
+    <h2><span data-i18n="es">Encuentra los elementos</span><span data-i18n="en">Find the elements</span></h2>
+    <p class="lede-lg"><span data-i18n="es">En una tabla “Alumnos” con columnas DNI, Nombre, FechaNacimiento y Curso: señala el campo, el registro y la clave primaria.</span><span data-i18n="en">In a “Students” table with columns ID, Name, BirthDate and Grade: point out the field, the record and the primary key.</span></p>
+  </div>
+</section>
+<section class="slide " data-deco="2">
+  <div class="deco-corner deco-a"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">05 — <span data-i18n="es">Tipos y modelos de datos (I)</span><span data-i18n="en">Types and data models (I)</span></span>
+    <h2><span data-i18n="es">De la jerarquía a las tablas</span><span data-i18n="en">From the hierarchy to the tables</span></h2>
+    <div class="cards cards-4"><div class="card"><span class="tag"><span data-i18n="es">Jerárquico</span><span data-i18n="en">Hierarchical</span></span><p><span data-i18n="es">Árbol, unidireccional. 1 padre → N hijos. El registro de Windows.</span><span data-i18n="en">Tree-shaped, one-directional. 1 parent → N children. The Windows registry.</span></p></div>
+<div class="card"><span class="tag"><span data-i18n="es">En red</span><span data-i18n="en">Network</span></span><p><span data-i18n="es">Grafo: relaciones N:M entre nodos padre e hijo.</span><span data-i18n="en">Graph: N:M relationships between parent and child nodes.</span></p></div>
+<div class="card"><span class="tag"><span data-i18n="es">Relacional</span><span data-i18n="en">Relational</span></span><p><span data-i18n="es">Tablas bidimensionales relacionadas por campos. El más usado.</span><span data-i18n="en">Two-dimensional tables linked by fields. The most widely used.</span></p></div>
+<div class="card"><span class="tag"><span data-i18n="es">Orientado a objetos</span><span data-i18n="en">Object-oriented</span></span><p><span data-i18n="es">Tipos compuestos y herencia. Ingeniería, datos espaciales.</span><span data-i18n="en">Composite types and inheritance. Engineering, spatial data.</span></p></div></div>
+  </div>
+</section>
+<section class="slide " data-deco="3">
+  <div class="deco-corner deco-a"></div>
+  <div class="deco-corner deco-b"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">05 — <span data-i18n="es">Tipos y modelos de datos (II)</span><span data-i18n="en">Types and data models (II)</span></span>
+    <h2><span data-i18n="es">Multidimensional, NoSQL y ubicación</span><span data-i18n="en">Multidimensional, NoSQL & location</span></h2>
+    <div class="cards cards-2" style="margin-bottom:28px;"><div class="card"><span class="tag"><span data-i18n="es">Multidimensional</span><span data-i18n="en">Multidimensional</span></span><p><span data-i18n="es">Cubos de datos para Data Warehouse y OLAP.</span><span data-i18n="en">Data cubes for Data Warehousing and OLAP.</span></p></div>
+<div class="card"><span class="tag"><span data-i18n="es">NoSQL</span><span data-i18n="en">NoSQL</span></span><p><span data-i18n="es">Clave-valor, documental, grafos, columnar.</span><span data-i18n="en">Key-value, document, graph, column-based.</span></p></div></div>
+    <div class="two-col">
+      <div><span class="col-h"><span data-i18n="es">Centralizada</span><span data-i18n="en">Centralised</span></span><p><span data-i18n="es">Un único servidor: Access, MySQL, PostgreSQL, Oracle.</span><span data-i18n="en">A single server: Access, MySQL, PostgreSQL, Oracle.</span></p></div>
+      <div><span class="col-h"><span data-i18n="es">Distribuida</span><span data-i18n="en">Distributed</span></span><p><span data-i18n="es">Repartida en varias máquinas: Oracle Cloud, MongoDB, Redis.</span><span data-i18n="en">Spread across several machines: Oracle Cloud, MongoDB, Redis.</span></p></div>
+    </div>
+  </div>
+</section>
+<section class="slide " data-deco="4">
+  <div class="deco-corner deco-a"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">06 — <span data-i18n="es">El sistema gestor de bases de datos</span><span data-i18n="en">The database management system</span></span>
+    <h2><span data-i18n="es">BD ≠ SGBD</span><span data-i18n="en">Database ≠ DBMS</span></h2>
+    <p class="lede-lg"><span data-i18n="es">La <strong>base de datos</strong> es la información organizada; el <strong>SGBD</strong> es el software que la crea, manipula y administra. Oracle, MySQL, MariaDB, Access, MongoDB y PostgreSQL son SGBD.</span><span data-i18n="en">The <strong>database</strong> is the organised information; the <strong>DBMS</strong> is the software that creates, manipulates and administers it. Oracle, MySQL, MariaDB, Access, MongoDB and PostgreSQL are DBMSs.</span></p>
+    <div class="cards cards-2">
+      <div class="card"><span class="tag"><span data-i18n="es">FUNCIONES</span><span data-i18n="en">FUNCTIONS</span></span><p><span data-i18n="es">Independencia de datos · seguridad · integridad y transacciones · acceso concurrente · copias de seguridad.</span><span data-i18n="en">Data independence · security · integrity and transactions · concurrent access · backups.</span></p></div>
+      <div class="card"><span class="tag"><span data-i18n="es">COMPONENTES</span><span data-i18n="en">COMPONENTS</span></span><p><span data-i18n="es">Diccionario de datos · espacio de datos · herramientas de administración (DBA).</span><span data-i18n="en">Data dictionary · data space · administration tools (DBA).</span></p></div>
+    </div>
+  </div>
+</section>
+<section class="slide " data-deco="5">
+  <div class="deco-corner deco-a"></div>
+  <div class="deco-corner deco-b"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">06 — <span data-i18n="es">Las cuatro propiedades del SGBD</span><span data-i18n="en">The DBMS's four properties</span></span>
+    <h2>ACID</h2>
+    <div class="acid-grid"><div class="acid-cell"><span class="letter">A</span><h4><span data-i18n="es">Atomicidad</span><span data-i18n="en">Atomicity</span></h4><p><span data-i18n="es">Todas las operaciones se ejecutan, o ninguna.</span><span data-i18n="en">Every operation runs, or none of them do.</span></p></div>
+<div class="acid-cell"><span class="letter">C</span><h4><span data-i18n="es">Consistencia</span><span data-i18n="en">Consistency</span></h4><p><span data-i18n="es">De un estado válido a otro estado válido.</span><span data-i18n="en">From one valid state to another valid state.</span></p></div>
+<div class="acid-cell"><span class="letter">I</span><h4><span data-i18n="es">Aislamiento</span><span data-i18n="en">Isolation</span></h4><p><span data-i18n="es">Ninguna transacción ve el resultado de otra en curso.</span><span data-i18n="en">No transaction sees another one's in-progress result.</span></p></div>
+<div class="acid-cell"><span class="letter">D</span><h4><span data-i18n="es">Durabilidad</span><span data-i18n="en">Durability</span></h4><p><span data-i18n="es">Confirmada la operación, no se pierde.</span><span data-i18n="en">Once confirmed, the data will not be lost.</span></p></div></div>
+  </div>
+</section>
+<section class="slide " data-deco="6">
+  <div class="deco-corner deco-a"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">06 — <span data-i18n="es">Arquitectura en 3 niveles (ANSI/SPARC)</span><span data-i18n="en">Three-level architecture (ANSI/SPARC)</span></span>
+    <h2><span data-i18n="es">Independencia lógica y física</span><span data-i18n="en">Logical and physical independence</span></h2>
+    <div class="arch">
+      <div class="arch-layer ext"><span class="lbl"><span data-i18n="es">EXTERNO — el usuario</span><span data-i18n="en">EXTERNAL — the user</span></span><span><span data-i18n="es">Formularios, listados, informes.</span><span data-i18n="en">Forms, listings, reports.</span></span></div>
+      <div class="arch-layer con"><span class="lbl"><span data-i18n="es">CONCEPTUAL — el diseño</span><span data-i18n="en">CONCEPTUAL — the design</span></span><span><span data-i18n="es">Todos los datos y relaciones, en tablas.</span><span data-i18n="en">All the data and relationships, as tables.</span></span></div>
+      <div class="arch-layer int"><span class="lbl"><span data-i18n="es">INTERNO — el almacenamiento</span><span data-i18n="en">INTERNAL — the storage</span></span><span><span data-i18n="es">Cómo se escriben los datos en el disco.</span><span data-i18n="en">How the data is written on disk.</span></span></div>
+    </div>
+  </div>
+</section>
+<section class="slide " data-deco="1">
+  <div class="deco-corner deco-a"></div>
+  <div class="deco-corner deco-b"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">06 — <span data-i18n="es">Tipos de SGBD y perfiles de usuario</span><span data-i18n="en">Types of DBMS and user profiles</span></span>
+    <h2><span data-i18n="es">Del uso doméstico al corporativo</span><span data-i18n="en">From home use to enterprise</span></h2>
+    <div class="two-col" style="margin-bottom:26px;">
+      <div><span class="col-h"><span data-i18n="es">Ofimáticos</span><span data-i18n="en">Office-oriented</span></span><p><span data-i18n="es">Datos domésticos o de pequeñas empresas.</span><span data-i18n="en">Home or small-business data.</span></p></div>
+      <div><span class="col-h"><span data-i18n="es">Corporativos</span><span data-i18n="en">Enterprise</span></span><p><span data-i18n="es">Grandes volúmenes de datos y transacciones.</span><span data-i18n="en">High volumes of data and transactions.</span></p></div>
+    </div>
+    <p class="note"><span data-i18n="es">Perfiles: <strong>usuario final</strong>, <strong>analista/ingeniero de datos</strong>, <strong>desarrollador</strong> y <strong>DBA</strong>.</span><span data-i18n="en">Profiles: <strong>end user</strong>, <strong>data analyst/engineer</strong>, <strong>developer</strong> and <strong>DBA</strong>.</span></p>
+    <div class="vendor-row"><span class="vendor-chip">Oracle</span>
+<span class="vendor-chip">MySQL</span>
+<span class="vendor-chip">MariaDB</span>
+<span class="vendor-chip">PostgreSQL</span>
+<span class="vendor-chip">SQL Server</span>
+<span class="vendor-chip">MS Access</span>
+<span class="vendor-chip">MongoDB</span></div>
+  </div>
+</section>
+<section class="slide " data-deco="2">
+  <div class="deco-corner deco-a"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">07 — <span data-i18n="es">El lenguaje SQL</span><span data-i18n="en">The SQL language</span></span>
+    <h2><span data-i18n="es">Cuatro sublenguajes</span><span data-i18n="en">Four sub-languages</span></h2>
+    <div class="cards cards-4">
+      <div class="card sql-card"><span class="tag">DML</span><p><span data-i18n="es">Manipular datos</span><span data-i18n="en">Manipulate data</span></p><p class="code-mini">SELECT · INSERT · UPDATE · DELETE</p></div>
+      <div class="card sql-card"><span class="tag">DDL</span><p><span data-i18n="es">Definir la estructura</span><span data-i18n="en">Define the structure</span></p><p class="code-mini">CREATE · ALTER · DROP</p></div>
+      <div class="card sql-card"><span class="tag">DCL</span><p><span data-i18n="es">Controlar el acceso</span><span data-i18n="en">Control access</span></p><p class="code-mini">GRANT · REVOKE</p></div>
+      <div class="card sql-card"><span class="tag">TCL</span><p><span data-i18n="es">Controlar transacciones</span><span data-i18n="en">Control transactions</span></p><p class="code-mini">BEGIN · COMMIT · ROLLBACK</p></div>
+    </div>
+    <div class="code">
+<span class="cm"><span data-i18n="es">-- coches Ferrari o Toyota</span><span data-i18n="en">-- Ferrari or Toyota cars</span></span>
+<span class="kw">SELECT</span> Marca, Modelo, Consumo <span class="kw">FROM</span> Automoviles
+<span class="kw">WHERE</span> Marca = 'Ferrari' <span class="kw">OR</span> Marca = 'Toyota';
+    </div>
+  </div>
+</section>
+<section class="slide " data-deco="3">
+  <div class="deco-corner deco-a"></div>
+  <div class="deco-corner deco-b"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">08 — <span data-i18n="es">Legislación sobre protección de datos</span><span data-i18n="en">Data protection legislation</span></span>
+    <h2>RGPD · LOPDGDD · AEPD</h2>
+    <p class="lede-lg"><span data-i18n="es">El RGPD (UE) y la LOPDGDD (España) regulan las BD con datos personales; la AEPD vela por su cumplimiento. Multas de hasta 20M € o el 4% de la facturación.</span><span data-i18n="en">The GDPR (EU) and the LOPDGDD (Spain) regulate databases holding personal data; the AEPD enforces them. Fines of up to €20M or 4% of turnover.</span></p>
+    <span class="col-h"><span data-i18n="es">Datos sensibles</span><span data-i18n="en">Sensitive data</span></span>
+    <div class="pillbox"><span class="pill"><span data-i18n="es">Origen racial o étnico</span><span data-i18n="en">Racial or ethnic origin</span></span>
+<span class="pill"><span data-i18n="es">Ideología</span><span data-i18n="en">Ideology / beliefs</span></span>
+<span class="pill"><span data-i18n="es">Afiliación sindical</span><span data-i18n="en">Trade union membership</span></span>
+<span class="pill"><span data-i18n="es">Religión</span><span data-i18n="en">Religion</span></span>
+<span class="pill"><span data-i18n="es">Orientación sexual</span><span data-i18n="en">Sexual orientation</span></span>
+<span class="pill"><span data-i18n="es">Salud</span><span data-i18n="en">Health</span></span></div>
+  </div>
+</section>
+<section class="slide " data-deco="4">
+  <div class="deco-corner deco-a"></div>
+  <div class="slide-inner">
+    <span class="eyebrow">09 — <span data-i18n="es">Dónde vive una base de datos</span><span data-i18n="en">Where a database lives</span></span>
+    <h2><span data-i18n="es">En casi todas partes</span><span data-i18n="en">Almost everywhere</span></h2>
+    <div class="cards cards-4"><div class="card small"><h4><span data-i18n="es">Administrativas</span><span data-i18n="en">Administrative</span></h4><p><span data-i18n="es">Clientes, pedidos, facturas.</span><span data-i18n="en">Customers, orders, invoices.</span></p></div>
+<div class="card small"><h4><span data-i18n="es">Contables</span><span data-i18n="en">Accounting</span></h4><p><span data-i18n="es">Pagos, balances, impuestos.</span><span data-i18n="en">Payments, balances, tax filings.</span></p></div>
+<div class="card small"><h4><span data-i18n="es">Motores de búsqueda</span><span data-i18n="en">Search engines</span></h4><p><span data-i18n="es">Google indexa casi todo internet.</span><span data-i18n="en">Google indexes almost the entire internet.</span></p></div>
+<div class="card small"><h4><span data-i18n="es">Científicas</span><span data-i18n="en">Scientific</span></h4><p><span data-i18n="es">Datos climáticos, genómicos.</span><span data-i18n="en">Climate, genomic data.</span></p></div>
+<div class="card small"><h4><span data-i18n="es">Bibliotecas</span><span data-i18n="en">Libraries</span></h4><p><span data-i18n="es">Del instituto a Amazon.</span><span data-i18n="en">From a school library to Amazon.</span></p></div>
+<div class="card small"><h4><span data-i18n="es">Censos</span><span data-i18n="en">Census records</span></h4><p><span data-i18n="es">Demografía de pueblos y países.</span><span data-i18n="en">Demographic data for towns and countries.</span></p></div>
+<div class="card small"><h4><span data-i18n="es">Antivirus</span><span data-i18n="en">Antivirus</span></h4><p><span data-i18n="es">Catálogos de malware conocido.</span><span data-i18n="en">Catalogues of known malware.</span></p></div>
+<div class="card small"><h4><span data-i18n="es">Configuración</span><span data-i18n="en">Configuration</span></h4><p><span data-i18n="es">El registro de Windows.</span><span data-i18n="en">The Windows registry.</span></p></div></div>
+  </div>
+</section>
+<section class="slide " data-deco="repaso">
+  <div class="deco-corner deco-a deco-repaso"></div>
+  <div class="slide-inner repaso-inner">
+    <div class="repaso-text">
+      <span class="eyebrow"><span data-i18n="es">Repaso</span><span data-i18n="en">Review</span></span>
+      <h2><span data-i18n="es">La ruleta de preguntas</span><span data-i18n="en">The question wheel</span></h2>
+      <p class="lede-lg"><span data-i18n="es">Lanza la ruleta (o elige al azar) y responde en voz alta.</span><span data-i18n="en">Spin the wheel (or pick one at random) and answer out loud.</span></p>
+    </div>
+    <div class="wheel-wrap">
+      <div class="wheel"></div>
+      <div class="wheel-pointer">➤</div>
+    </div>
+    <ol class="repaso-list"><li><span data-i18n="es">¿Qué significa DML?</span><span data-i18n="en">What does DML stand for?</span></li>
+<li><span data-i18n="es">¿Para qué sirve un gestor de base de datos?</span><span data-i18n="en">What is a DBMS for?</span></li>
+<li><span data-i18n="es">¿En qué consiste la redundancia de datos?</span><span data-i18n="en">What does data redundancy mean?</span></li>
+<li><span data-i18n="es">¿Qué ventaja tiene la integridad de las bases de datos?</span><span data-i18n="en">What's the advantage of database integrity?</span></li>
+<li><span data-i18n="es">¿Cómo se llama el nivel que describe toda la estructura de la BBDD?</span><span data-i18n="en">What is the level called that describes the whole DB structure?</span></li>
+<li><span data-i18n="es">¿Sabrías dar un ejemplo de clave primaria en la vida real?</span><span data-i18n="en">Can you give a real-life example of a primary key?</span></li>
+<li><span data-i18n="es">¿Cuál es el objetivo de la base de datos?</span><span data-i18n="en">What is the goal of a database?</span></li>
+<li><span data-i18n="es">¿Para qué sirve una base de datos?</span><span data-i18n="en">What is a database for?</span></li>
+<li><span data-i18n="es">Menciona algunos tipos de bases de datos</span><span data-i18n="en">Name some types of databases</span></li>
+<li><span data-i18n="es">¿Tipos de ficheros según su contenido?</span><span data-i18n="en">What types of files are there by content?</span></li></ol>
+  </div>
+</section>
+<section class="slide slide-final" data-deco="5">
+  <div class="deco-corner deco-a"></div>
+  <div class="deco-corner deco-b"></div>
+  <div class="slide-inner">
+    <span class="eyebrow"><span data-i18n="es">En resumen</span><span data-i18n="en">In summary</span></span>
+    <h2><span data-i18n="es">Seis ideas para llevarse</span><span data-i18n="en">Six ideas to take away</span></h2>
+    <ol class="final-list"><li><strong><span data-i18n="es">Un fichero</span><span data-i18n="en">A file</span></strong> <span data-i18n="es">es una estructura del sistema operativo para guardar información.</span><span data-i18n="en">is a structure created by the OS to hold information.</span></li>
+<li><strong><span data-i18n="es">Una base de datos</span><span data-i18n="en">A database</span></strong> <span data-i18n="es">se organiza en tablas con registros y campos relacionados.</span><span data-i18n="en">is organised into tables with related records and fields.</span></li>
+<li><strong><span data-i18n="es">Los modelos de datos</span><span data-i18n="en">Data models</span></strong> <span data-i18n="es">han evolucionado del jerárquico al relacional y al NoSQL.</span><span data-i18n="en">have evolved from hierarchical to relational and NoSQL.</span></li>
+<li><strong><span data-i18n="es">Un SGBD</span><span data-i18n="en">A DBMS</span></strong> <span data-i18n="es">garantiza integridad, seguridad, concurrencia y recuperación.</span><span data-i18n="en">guarantees integrity, security, concurrency and recovery.</span></li>
+<li><strong><span data-i18n="es">SQL</span><span data-i18n="en">SQL</span></strong> <span data-i18n="es">se divide en DML, DDL, DCL y TCL.</span><span data-i18n="en">is split into DML, DDL, DCL and TCL.</span></li>
+<li><strong><span data-i18n="es">El RGPD y la LOPDGDD</span><span data-i18n="en">The GDPR and LOPDGDD</span></strong> <span data-i18n="es">regulan el tratamiento de datos personales.</span><span data-i18n="en">regulate the handling of personal data.</span></li></ol>
+    <p class="credits"><span data-i18n="es">Resumen elaborado a partir de UT1 · Sistemas de almacenamiento de la información — Base de datos, 1º DAM — Marina Preciados Agapito, con materiales de Aitor Medrano (CC BY-NC-SA 4.0).</span><span data-i18n="en">Summary built from Unit 1 · Information storage systems — Databases, 1st year DAM — Marina Preciados Agapito, with materials by Aitor Medrano (CC BY-NC-SA 4.0).</span></p>
+  </div>
+</section>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button type="button" class="nav-btn" id="btn-prev" onclick="go(-1)" aria-label="Previous slide">‹</button>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <span class="slide-counter" id="slide-counter">1 / 24</span>
+    </div>
+    <button type="button" class="nav-btn" id="btn-next" onclick="go(1)" aria-label="Next slide">›</button>
+  </div>
+  <p class="hint"><span data-i18n="es">Usa las flechas del teclado, haz clic en ‹ › o pulsa pantalla completa para proyectar en clase.</span><span data-i18n="en">Use the arrow keys, click ‹ ›, or hit fullscreen to project in class.</span></p>
+
+</div><!-- /#deck-app -->
+
+<script>
+(function(){
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+  var idx = 0;
+
+  function render(){
+    slides.forEach(function(s,i){ s.classList.toggle('is-active', i===idx); });
+    document.getElementById('slide-counter').textContent = (idx+1) + ' / ' + total;
+    document.getElementById('progress-fill').style.width = ((idx+1)/total*100) + '%';
+    document.getElementById('btn-prev').disabled = idx===0;
+    document.getElementById('btn-next').disabled = idx===total-1;
+  }
+
+  window.go = function(delta){
+    idx = Math.max(0, Math.min(total-1, idx+delta));
+    render();
+  };
+
+  document.addEventListener('keydown', function(e){
+    if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){ e.preventDefault(); go(1); }
+    else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){ e.preventDefault(); go(-1); }
+    else if(e.key==='Home'){ idx=0; render(); }
+    else if(e.key==='End'){ idx=total-1; render(); }
+  });
+
+  window.setLang = function(lang){
+    var app = document.getElementById('deck-app');
+    if(app) app.setAttribute('data-lang', lang);
+    document.getElementById('btn-es').classList.toggle('active', lang==='es');
+    document.getElementById('btn-en').classList.toggle('active', lang==='en');
+    try{ localStorage.setItem('ut1-resumen-lang', lang); }catch(e){}
+  };
+
+  window.toggleFullscreen = function(){
+    var stage = document.getElementById('stage');
+    if(!document.fullscreenElement){
+      if(stage.requestFullscreen) stage.requestFullscreen();
+    } else {
+      if(document.exitFullscreen) document.exitFullscreen();
+    }
+  };
+
+  try{
+    var saved = localStorage.getItem('ut1-resumen-lang');
+    if(saved) setLang(saved);
+  }catch(e){}
+
+  render();
+})();
+</script>
+
+</body>
+</html>
