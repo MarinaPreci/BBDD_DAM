@@ -9,25 +9,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #1b1b1b;
-    --bg-alt: #232323;
-    --panel: #292929;
-    --line: #3d3d3d;
+    --bg: #262626;
+    --bg-alt: #2e2e2e;
+    --panel: #333333;
+    --line: #4a4a4a;
     --ink: #ece9e0;
     --ink-soft: #a6acc4;
-    --ink-dim: #767c98;
+    --ink-dim: #8a90ac;
     --clay: #3acfba;
     --clay-soft: #a9ecdf;
     --teal: #49a89c;
     --teal-soft: #bfe3dd;
-    --maxw: 1180px;
+    --maxw: min(96vw, 1800px);
     --radius: 3px;
   }
   *{box-sizing:border-box;}
+  html{font-size:18px;}
   body{
     margin:0; background:var(--bg); color:var(--ink);
     font-family:'Inter',system-ui,sans-serif; line-height:1.6;
-    -webkit-font-smoothing:antialiased;
+    -webkit-font-smoothing:antialiased; font-size:1.25rem;
   }
   ::selection{background:var(--clay);color:#12211e;}
   h1,h2,h3,h4{font-family:'Fraunces',serif; font-weight:700; line-height:1.14; margin:0 0 .5em; letter-spacing:-0.01em;}
@@ -37,7 +38,7 @@
 
   main{max-width:var(--maxw); margin:0 auto; padding:0 24px;}
   .kicker{font-family:'Spline Sans Mono',monospace; font-size:18px; color:var(--clay-soft); letter-spacing:.04em; display:block; margin-bottom:14px;}
-  .lede{font-size:1.15rem; color:var(--ink-soft); max-width:640px;}
+  .lede{font-size:1.25rem; color:var(--ink-soft); max-width:100%;}
 
   header.hero{
     position:relative; padding:120px 24px 80px; overflow:hidden;
@@ -47,9 +48,9 @@
       radial-gradient(ellipse 700px 500px at 100% 0%, rgba(73,168,156,.14), transparent 55%);
   }
   .hero-inner{max-width:var(--maxw); margin:0 auto; position:relative; z-index:2;}
-  .hero h1{font-size:clamp(2.2rem,5.4vw,4rem); max-width:20ch; color:var(--ink);}
+  .hero h1{font-size:clamp(2.2rem,5.4vw,4rem); max-width:100%; color:var(--ink);}
   .hero h1 em{font-style:italic; color:var(--clay);}
-  .hero .lede{margin-top:20px; font-size:1.2rem;}
+  .hero .lede{margin-top:20px; font-size:1.25rem;}
   .hero .byline{margin-top:24px; font-family:'Spline Sans Mono',monospace; font-size:16px; color:var(--ink-dim);}
 
   section{padding:64px 0;}
@@ -58,19 +59,29 @@
     text-transform:uppercase; color:var(--ink-dim); display:block; margin-bottom:18px;
   }
 
+  .plan-row{display:flex; flex-direction:column; gap:16px; margin-bottom:56px;}
   .plan-card{
     display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;
     background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
-    padding:26px 30px; margin-bottom:56px;
+    padding:26px 30px;
   }
   .plan-card h3{margin-bottom:6px; font-size:1.3rem;}
-  .plan-card p{margin:0; color:var(--ink-soft); max-width:520px;}
+  .plan-card p{margin:0; color:var(--ink-soft); max-width:100%;}
   .btn{
     font-family:'Spline Sans Mono',monospace; font-size:15px; letter-spacing:.02em;
     color:#0d211c; background:var(--clay); border-radius:999px; padding:11px 22px;
     white-space:nowrap; display:inline-block;
   }
   .btn:hover{background:var(--clay-soft); color:#0d211c;}
+  .btn.alt{background:none; border:1px solid var(--teal-soft); color:var(--teal-soft);}
+  .btn.alt:hover{background:var(--teal-soft); color:#0d211c;}
+
+  .tri-label{
+    font-family:'Spline Sans Mono',monospace; font-size:14.5px; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--ink-dim);
+    margin:36px 0 14px;
+  }
+  .tri-label:first-child{margin-top:0;}
 
   .unit-list{display:flex; flex-direction:column; gap:16px;}
   .unit-card{
@@ -102,21 +113,117 @@
   }
 
   footer{padding:50px 0 80px; border-top:1px solid var(--line); margin-top:40px;}
-  footer p{color:var(--ink-dim); font-size:.98rem; max-width:640px;}
+  footer p{color:var(--ink-dim); font-size:1.25rem; max-width:100%;}
 
   @media(max-width:640px){
     .unit-card{flex-direction:column;}
     .order-num{width:auto;}
+    .plan-card{flex-direction:column; align-items:flex-start;}
   }
+</style>
+
+<style>
+  /* Hardcoded colors on purpose (no var(--...) lookups): some pages, like the
+     bright résumé deck, redefine --ink/--line/--bg-alt for their own theme,
+     and the sidebar must stay visually identical everywhere. */
+  .sidebar{
+    position:fixed; top:0; left:0; bottom:0; width:252px;
+    background:#1f2020; border-right:1px solid #3d3d3d;
+    overflow-y:auto; padding:26px 18px 30px; z-index:100000;
+    font-family:'Inter',system-ui,sans-serif;
+  }
+  .sidebar::-webkit-scrollbar{width:8px;}
+  .sidebar::-webkit-scrollbar-thumb{background:#3d3d3d; border-radius:4px;}
+  .sidebar .brand{
+    font-family:'Fraunces',serif; font-weight:700; color:#ece9e0;
+    font-size:1.15rem; display:block; margin:2px 6px 2px;
+  }
+  .sidebar .brand-sub{
+    font-family:'Spline Sans Mono',monospace; font-size:12px; color:#767c98;
+    letter-spacing:.04em; display:block; margin:0 6px 26px;
+  }
+  .sidebar nav{display:flex; flex-direction:column; gap:1px;}
+  .sidebar a{
+    display:block; padding:8px 10px; border-radius:4px; font-size:14.5px;
+    color:#a6acc4; text-decoration:none; line-height:1.35;
+  }
+  .sidebar a:hover{background:rgba(255,255,255,.07); color:#a9ecdf;}
+  .sidebar a.active{background:rgba(58,207,186,.16); color:#3acfba; font-weight:600;}
+  .sidebar .group-label{
+    font-family:'Spline Sans Mono',monospace; font-size:11.5px; letter-spacing:.07em;
+    text-transform:uppercase; color:#767c98; margin:22px 0 6px; padding:0 10px;
+  }
+  .sidebar .group-label:first-of-type{margin-top:4px;}
+  .sidebar .ut-group{margin-bottom:1px;}
+  .sidebar .ut-group > a{font-weight:600;}
+  .sidebar .ut-children{
+    display:flex; flex-direction:column; padding-left:14px; margin:2px 0 6px 20px;
+    border-left:1px solid #3d3d3d;
+  }
+  .sidebar .ut-children a{font-size:13.5px; padding:6px 10px; font-weight:400;}
+  .sidebar a.pending{color:#767c98; cursor:default; opacity:.55;}
+  .sidebar a.pending:hover{background:none; color:#767c98;}
+
+  .sidebar{transition:transform .22s ease;}
+  .sidebar-toggle{
+    display:flex; position:fixed; top:12px; left:12px; z-index:100001;
+    width:42px; height:42px; border-radius:8px;
+    background:#292929; border:1px solid #3d3d3d;
+    color:#ece9e0; font-size:18px; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .sidebar-toggle:hover{background:#333;}
+  .sidebar-backdrop{display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:99999;}
+  body{margin-left:252px !important; transition:margin-left .22s ease;}
+
+  /* body.sidebar-collapsed = the user (or the responsive default) hid the menu.
+     On wide screens, hiding it reclaims the space; on narrow screens the menu
+     is an overlay, so content never shifts and a backdrop dims the page. */
+  body.sidebar-collapsed{margin-left:0 !important;}
+  body.sidebar-collapsed .sidebar{
+    transform:translateX(-100%);
+    box-shadow:none;
+  }
+
+  @media(max-width:880px){
+    body{margin-left:0 !important;}
+    .sidebar{
+      transform:translateX(-100%);
+      box-shadow:0 0 40px rgba(0,0,0,.55);
+    }
+    body:not(.sidebar-collapsed) .sidebar{transform:translateX(0);}
+    body:not(.sidebar-collapsed) .sidebar-backdrop{display:block;}
+  }
+
 </style>
 </head>
 <body>
+<button class="sidebar-toggle" aria-label="Abrir menú">☰</button>
+<div class="sidebar-backdrop"></div>
+<aside class="sidebar">
+  <span class="brand"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CFGS DAM </span>
+  <span class="brand">Bases de datos</span>
+  <span class="brand-sub"> 1º DAM bilingüe</span>
+  <nav>
+    
+    <a href="index.html" class="active">Portal</a>
+    <a href="modulo.html">Módulo</a>
+    
+    <span class="group-label">Unidades de trabajo</span>
+    <div class="ut-group"><a href="ut1/teoria.html">UT1</a>
+      <div class="ut-children">
+        <a href="ut1/teoria.html">📖 Teoría</a>
+        <a href="ut1/actividades.html">📝 Actividades</a>
+        <a href="ut1/resumen.html">🎛️ Resumen</a>
+      </div></div><a class="pending" title="Próximamente">UT2 · próximamente</a><a class="pending" title="Próximamente">UT3 · próximamente</a><a class="pending" title="Próximamente">UT4 · próximamente</a><a class="pending" title="Próximamente">UT5 · próximamente</a><a class="pending" title="Próximamente">UT6 · próximamente</a><a class="pending" title="Próximamente">UT7 · próximamente</a><a class="pending" title="Próximamente">UT8 · próximamente</a>
+  </nav>
+</aside>
 
 <header class="hero">
   <div class="hero-inner">
-    <span class="kicker">Bases de datos (0484) · 1º DAM bilingüe</span>
-    <h1>Portal del <em>curso</em></h1>
-    <p class="lede">El punto de partida para todo el módulo: aquí se van enlazando la teoría, las actividades y las presentaciones-resumen de cada unidad, a medida que se van construyendo.</p>
+    <span class="kicker">· 1º DAM Bilingüe · </span>
+    <h1><em>Bases de datos</em></h1>
+    <p class="lede">Aquí se van enlazando la teoría, las actividades y las presentaciones-resumen de cada unidad, a medida que vamos avanzando en los contenidos.</p>
     <p class="byline">Marina Preciados Agapito</p>
   </div>
 </header>
@@ -124,18 +231,29 @@
 <main>
   <section id="programacion">
     <span class="sec-label">Punto de partida</span>
-    <div class="plan-card">
-      <div>
-        <h3>Programación de Unidades de Trabajo</h3>
-        <p>Las 7 UT, una por RA, con bloques, contenidos y criterios de evaluación oficiales — y el orden de impartición que sigue este portal.</p>
+    <div class="plan-row">
+      <div class="plan-card">
+        <div>
+          <h3>Presentación del módulo</h3>
+          <p>Horario, metodología, resultados de aprendizaje y evaluación del módulo completo.</p>
+        </div>
+        <a class="btn alt" href="modulo.html">Ver módulo →</a>
       </div>
-      <a class="btn" href="programacion.html">Ver programación →</a>
+      <div class="plan-card">
+        <div>
+          <h3>Programación de Unidades de Trabajo</h3>
+          <p>8 UT, RA asociados, con bloques, contenidos y criterios de evaluación oficiales — y el orden de impartición que sigue este portal.</p>
+        </div>
+        <a class="btn" href="programacion.html">Ver programación →</a>
+      </div>
     </div>
   </section>
 
   <section id="unidades">
-    <span class="sec-label">Unidades de trabajo · en orden de impartición</span>
+    <span class="sec-label">· Unidades de trabajo ·</span>
     <div class="unit-list">
+
+      <p class="tri-label">Primer trimestre</p>
 
       <div class="unit-card">
         <span class="order-num">1</span>
@@ -153,15 +271,6 @@
       <div class="unit-card pending">
         <span class="order-num">2</span>
         <div class="unit-meta">
-          <span class="unit-tag">UT6 · RA6 · Bloque B6</span>
-          <h3>Interpretación de diagramas entidad/relación</h3>
-        </div>
-        <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
-      </div>
-
-      <div class="unit-card pending">
-        <span class="order-num">3</span>
-        <div class="unit-meta">
           <span class="unit-tag">UT2 · RA2 · Bloque B2</span>
           <h3>Bases de datos relacionales</h3>
         </div>
@@ -169,9 +278,20 @@
       </div>
 
       <div class="unit-card pending">
+        <span class="order-num">3</span>
+        <div class="unit-meta">
+          <span class="unit-tag">UT3 · RA6 · Bloque B6</span>
+          <h3>Interpretación de diagramas entidad/relación</h3>
+        </div>
+        <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
+      </div>
+
+      <p class="tri-label">Segundo trimestre</p>
+
+      <div class="unit-card pending">
         <span class="order-num">4</span>
         <div class="unit-meta">
-          <span class="unit-tag">UT3 · RA3 · Bloque B3</span>
+          <span class="unit-tag">UT4 · RA3 · Bloque B3</span>
           <h3>Realización de consultas</h3>
         </div>
         <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
@@ -180,17 +300,19 @@
       <div class="unit-card pending">
         <span class="order-num">5</span>
         <div class="unit-meta">
-          <span class="unit-tag">UT4 · RA4 · Bloque B4</span>
-          <h3>Tratamiento de datos</h3>
+          <span class="unit-tag">UT5 · RA3 · Bloque B3</span>
+          <h3>Realización de consultas avanzadas</h3>
         </div>
         <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
       </div>
 
+      <p class="tri-label">Tercer trimestre</p>
+
       <div class="unit-card pending">
         <span class="order-num">6</span>
         <div class="unit-meta">
-          <span class="unit-tag">UT5 · RA5 · Bloque B5</span>
-          <h3>Programación de bases de datos</h3>
+          <span class="unit-tag">UT6 · RA4 · Bloque B4</span>
+          <h3>Tratamiento de datos</h3>
         </div>
         <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
       </div>
@@ -198,7 +320,16 @@
       <div class="unit-card pending">
         <span class="order-num">7</span>
         <div class="unit-meta">
-          <span class="unit-tag">UT7 · RA7 · Bloque B7</span>
+          <span class="unit-tag">UT7 · RA5 · Bloque B5</span>
+          <h3>Programación de bases de datos</h3>
+        </div>
+        <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
+      </div>
+
+      <div class="unit-card pending">
+        <span class="order-num">8</span>
+        <div class="unit-meta">
+          <span class="unit-tag">UT8 · RA7 · Bloque B7</span>
           <h3>Uso de bases de datos no relacionales</h3>
         </div>
         <div class="unit-links"><span class="pending-pill">Próximamente</span></div>
@@ -210,9 +341,43 @@
 
 <footer>
   <main style="padding:0;">
-    <p>Portal vivo: cada vez que se termina una unidad nueva, este índice se actualiza con sus enlaces — no hace falta ir a buscar el enlace suelto en el chat. Bases de datos (0484), RD 405/2023 — Marina Preciados Agapito, 1º DAM bilingüe.</p>
+    <p> Bases de datos  — Marina Preciados Agapito, 1º DAM bilingüe, IES Albarregas.</p>
   </main>
 </footer>
 
+
+<script>
+(function(){
+  var body = document.body;
+  var tg = document.querySelector('.sidebar-toggle');
+  var bd = document.querySelector('.sidebar-backdrop');
+  var sb = document.querySelector('.sidebar');
+  if(!tg || !bd || !sb) return;
+  var KEY = 'bbdd-sidebar';
+  function isNarrow(){ return window.matchMedia('(max-width:880px)').matches; }
+  function setCollapsed(collapsed, remember){
+    body.classList.toggle('sidebar-collapsed', collapsed);
+    if(remember){
+      try{ localStorage.setItem(KEY, collapsed ? 'collapsed' : 'open'); }catch(e){}
+    }
+  }
+  var saved = null;
+  try{ saved = localStorage.getItem(KEY); }catch(e){}
+  if(saved === 'collapsed' || saved === 'open'){
+    setCollapsed(saved === 'collapsed', false);
+  } else {
+    setCollapsed(isNarrow(), false);
+  }
+  tg.addEventListener('click', function(){
+    setCollapsed(!body.classList.contains('sidebar-collapsed'), true);
+  });
+  bd.addEventListener('click', function(){ setCollapsed(true, true); });
+  sb.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      if(isNarrow()){ setCollapsed(true, true); }
+    });
+  });
+})();
+</script>
 </body>
 </html>

@@ -9,25 +9,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #1b1b1b;
-    --bg-alt: #232323;
-    --panel: #292929;
-    --line: #3d3d3d;
+    --bg: #262626;
+    --bg-alt: #2e2e2e;
+    --panel: #333333;
+    --line: #4a4a4a;
     --ink: #ece9e0;
     --ink-soft: #a6acc4;
-    --ink-dim: #767c98;
+    --ink-dim: #8a90ac;
     --clay: #3acfba;
     --clay-soft: #a9ecdf;
     --teal: #49a89c;
     --teal-soft: #bfe3dd;
     --paper: #e7ddc6;
     --paper-ink: #2b2416;
-    --max: 780px;
-    --maxw: 1180px;
+    --max: min(90vw, 1400px);
+    --maxw: min(96vw, 1800px);
     --radius: 3px;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth; font-size:18px;}
   body{
     margin:0;
     background:var(--bg);
@@ -35,6 +35,7 @@
     font-family:'Inter',system-ui,sans-serif;
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
+    font-size:1.25rem;
   }
   ::selection{background:var(--clay);color:#12211e;}
 
@@ -137,9 +138,9 @@
     display:block;
   }
   .lede{
-    font-size:1.18rem;
+    font-size:1.25rem;
     color:var(--ink-soft);
-    max-width:640px;
+    max-width:100%;
   }
 
   /* ---------- hero ---------- */
@@ -155,7 +156,7 @@
   .hero-inner{max-width:var(--maxw); margin:0 auto; position:relative; z-index:2;}
   .hero h1{
     font-size:clamp(2.4rem, 6vw, 4.6rem);
-    max-width:14ch;
+    max-width:100%;
     color:var(--ink);
   }
   .hero h1 em{
@@ -224,7 +225,7 @@
     display:block;
   }
   .tl-item h3{font-size:1.25rem; margin-bottom:8px;}
-  .tl-item p{color:var(--ink-soft); max-width:640px;}
+  .tl-item p{color:var(--ink-soft); max-width:100%;}
 
   /* ---------- cards / grids ---------- */
   .grid{
@@ -423,7 +424,7 @@
     border-top:1px solid var(--line);
   }
   footer .inner{max-width:var(--maxw); margin:0 auto; display:flex; justify-content:space-between; gap:30px; flex-wrap:wrap;}
-  footer p{color:var(--ink-dim); font-size:1rem; max-width:520px;}
+  footer p{color:var(--ink-dim); font-size:1.25rem; max-width:100%;}
   footer a{color:var(--ink-soft);}
 
   ol.steps{padding-left:0; list-style:none; counter-reset:step; margin-top:40px;}
@@ -461,27 +462,102 @@
   }
 </style>
 
+
 <style>
-  .site-nav{
-    position:fixed; top:0; left:0; right:0; z-index:999;
-    display:flex; gap:14px; align-items:center; flex-wrap:wrap;
-    background:rgba(15,15,15,.92); backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--line, #3d3d3d);
-    padding:10px 20px;
-    font-family:'Spline Sans Mono',monospace;
-    font-size:14px;
+  /* Hardcoded colors on purpose (no var(--...) lookups): some pages, like the
+     bright résumé deck, redefine --ink/--line/--bg-alt for their own theme,
+     and the sidebar must stay visually identical everywhere. */
+  .sidebar{
+    position:fixed; top:0; left:0; bottom:0; width:252px;
+    background:#1f2020; border-right:1px solid #3d3d3d;
+    overflow-y:auto; padding:26px 18px 30px; z-index:100000;
+    font-family:'Inter',system-ui,sans-serif;
   }
-  .site-nav a{
-    color:var(--ink-dim, #767c98); text-decoration:none; padding:4px 2px;
+  .sidebar::-webkit-scrollbar{width:8px;}
+  .sidebar::-webkit-scrollbar-thumb{background:#3d3d3d; border-radius:4px;}
+  .sidebar .brand{
+    font-family:'Fraunces',serif; font-weight:700; color:#ece9e0;
+    font-size:1.15rem; display:block; margin:2px 6px 2px;
   }
-  .site-nav a:hover{color:var(--clay-soft, #a9ecdf);}
-  .site-nav a.active{color:var(--clay, #3acfba); font-weight:600;}
-  .site-nav .sep{color:var(--line, #3d3d3d);}
-  body{padding-top:44px;}
-  nav.toc{top:44px;}
+  .sidebar .brand-sub{
+    font-family:'Spline Sans Mono',monospace; font-size:12px; color:#767c98;
+    letter-spacing:.04em; display:block; margin:0 6px 26px;
+  }
+  .sidebar nav{display:flex; flex-direction:column; gap:1px;}
+  .sidebar a{
+    display:block; padding:8px 10px; border-radius:4px; font-size:14.5px;
+    color:#a6acc4; text-decoration:none; line-height:1.35;
+  }
+  .sidebar a:hover{background:rgba(255,255,255,.07); color:#a9ecdf;}
+  .sidebar a.active{background:rgba(58,207,186,.16); color:#3acfba; font-weight:600;}
+  .sidebar .group-label{
+    font-family:'Spline Sans Mono',monospace; font-size:11.5px; letter-spacing:.07em;
+    text-transform:uppercase; color:#767c98; margin:22px 0 6px; padding:0 10px;
+  }
+  .sidebar .group-label:first-of-type{margin-top:4px;}
+  .sidebar .ut-group{margin-bottom:1px;}
+  .sidebar .ut-group > a{font-weight:600;}
+  .sidebar .ut-children{
+    display:flex; flex-direction:column; padding-left:14px; margin:2px 0 6px 20px;
+    border-left:1px solid #3d3d3d;
+  }
+  .sidebar .ut-children a{font-size:13.5px; padding:6px 10px; font-weight:400;}
+  .sidebar a.pending{color:#767c98; cursor:default; opacity:.55;}
+  .sidebar a.pending:hover{background:none; color:#767c98;}
+
+  .sidebar{transition:transform .22s ease;}
+  .sidebar-toggle{
+    display:flex; position:fixed; top:12px; left:12px; z-index:100001;
+    width:42px; height:42px; border-radius:8px;
+    background:#292929; border:1px solid #3d3d3d;
+    color:#ece9e0; font-size:18px; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .sidebar-toggle:hover{background:#333;}
+  .sidebar-backdrop{display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:99999;}
+  body{margin-left:252px !important; transition:margin-left .22s ease;}
+
+  /* body.sidebar-collapsed = the user (or the responsive default) hid the menu.
+     On wide screens, hiding it reclaims the space; on narrow screens the menu
+     is an overlay, so content never shifts and a backdrop dims the page. */
+  body.sidebar-collapsed{margin-left:0 !important;}
+  body.sidebar-collapsed .sidebar{
+    transform:translateX(-100%);
+    box-shadow:none;
+  }
+
+  @media(max-width:880px){
+    body{margin-left:0 !important;}
+    .sidebar{
+      transform:translateX(-100%);
+      box-shadow:0 0 40px rgba(0,0,0,.55);
+    }
+    body:not(.sidebar-collapsed) .sidebar{transform:translateX(0);}
+    body:not(.sidebar-collapsed) .sidebar-backdrop{display:block;}
+  }
+
 </style>
 </head>
-<body><nav class="site-nav"><a href="../index.html">← Portal</a><span class="sep">|</span><a href="teoria.html" class="active">Teoría</a><a href="actividades.html">Actividades</a><a href="resumen.html">Resumen</a></nav>
+<body>
+<button class="sidebar-toggle" aria-label="Abrir menú">☰</button>
+<div class="sidebar-backdrop"></div>
+<aside class="sidebar">
+  <span class="brand">Bases de datos</span>
+  <span class="brand-sub">0484 · 1º DAM bilingüe</span>
+  <nav>
+    
+    <a href="../index.html">Portal</a>
+    <a href="../modulo.html">Módulo</a>
+    
+    <span class="group-label">Unidades de trabajo</span>
+    <div class="ut-group"><a href="teoria.html">UT1</a>
+      <div class="ut-children">
+        <a href="teoria.html" class="active">📖 Teoría</a>
+        <a href="actividades.html">📝 Actividades</a>
+        <a href="resumen.html">🎛️ Resumen</a>
+      </div></div><a class="pending" title="Próximamente">UT2 · próximamente</a><a class="pending" title="Próximamente">UT3 · próximamente</a><a class="pending" title="Próximamente">UT4 · próximamente</a><a class="pending" title="Próximamente">UT5 · próximamente</a><a class="pending" title="Próximamente">UT6 · próximamente</a><a class="pending" title="Próximamente">UT7 · próximamente</a><a class="pending" title="Próximamente">UT8 · próximamente</a>
+  </nav>
+</aside>
 
 <div id="ut1-app" data-lang="es">
 <div class="langbar" role="group" aria-label="language selector">
@@ -568,7 +644,7 @@
       <span class="sec-num">02</span>
       <h2><span data-i18n="es">La evolución del almacenamiento</span><span data-i18n="en">The evolution of storage</span></h2>
     </div>
-    <p class="lede" style="margin:0;max-width:420px;">
+    <p class="lede" style="margin:0;max-width:100%;">
       <span data-i18n="es">De la cinta secuencial a la base de datos distribuida en la nube.</span>
       <span data-i18n="en">From sequential tape to the distributed cloud database.</span>
     </p>
@@ -968,7 +1044,7 @@
   </div>
 
   <h3 style="margin-top:56px;"><span data-i18n="es">Arquitectura en 3 niveles (ANSI/SPARC)</span><span data-i18n="en">Three-level architecture (ANSI/SPARC)</span></h3>
-  <p class="lede" style="margin-top:6px;max-width:640px;">
+  <p class="lede" style="margin-top:6px;max-width:100%;">
     <span data-i18n="es">A mediados de los 70, el grupo ANSI/SPARC separó los datos de las aplicaciones en tres esquemas, permitiendo independencia lógica y física.</span>
     <span data-i18n="en">In the mid-1970s, the ANSI/SPARC group split data from applications into three schemas, enabling both logical and physical independence.</span>
   </p>
@@ -986,7 +1062,7 @@
       <span><span data-i18n="es">Cómo están escritos los datos en el ordenador: archivos, ubicación y organización física.</span><span data-i18n="en">How the data is actually written on the machine: files, their location and physical organisation.</span></span>
     </div>
   </div>
-  <p style="margin-top:26px;max-width:640px;color:var(--ink-soft);">
+  <p style="margin-top:26px;max-width:100%;color:var(--ink-soft);">
     <span data-i18n="es">Esto aporta <strong>independencia lógica</strong> (se puede ampliar o reducir el esquema conceptual sin reescribir las aplicaciones) e <strong>independencia física</strong> (se puede reorganizar el almacenamiento sin tocar ni el esquema conceptual ni el externo).</span>
     <span data-i18n="en">This gives us <strong>logical independence</strong> (the conceptual schema can grow or shrink without rewriting the applications) and <strong>physical independence</strong> (storage can be reorganised without touching either the conceptual or external schema).</span>
   </p>
@@ -1004,7 +1080,7 @@
       <p><span data-i18n="es">Grandes volúmenes de datos y transacciones que exigen un servidor potente. Ejemplo típico: Oracle.</span><span data-i18n="en">High volumes of data and transactions demanding a powerful server. Typical example: Oracle.</span></p>
     </div>
   </div>
-  <p class="lede" style="margin-top:34px;max-width:680px;">
+  <p class="lede" style="margin-top:34px;max-width:100%;">
     <span data-i18n="es">Alrededor de un SGBD conviven distintos perfiles: el <strong>usuario final</strong>, que interactúa a través de una aplicación; el <strong>analista/ingeniero de datos</strong>, que diseña la arquitectura; el <strong>desarrollador</strong>, que construye consultas e inserciones; y el <strong>DBA (administrador de la base de datos)</strong>, responsable de esquemas, permisos, seguridad y mantenimiento general.</span>
     <span data-i18n="en">Several profiles coexist around a DBMS: the <strong>end user</strong>, who interacts through an application; the <strong>data analyst/engineer</strong>, who designs the architecture; the <strong>developer</strong>, who builds queries and inserts; and the <strong>DBA (database administrator)</strong>, responsible for schemas, permissions, security and general upkeep.</span>
   </p>
@@ -1092,7 +1168,7 @@
   </div>
 
   <h3 style="margin-top:50px;"><span data-i18n="es">Datos sensibles</span><span data-i18n="en">Sensitive data</span></h3>
-  <p class="lede" style="margin-top:6px;max-width:640px;">
+  <p class="lede" style="margin-top:6px;max-width:100%;">
     <span data-i18n="es">Datos personales cuya divulgación indebida podría afectar gravemente a la privacidad y dignidad de una persona; sólo se pueden tratar con consentimiento explícito o excepciones legales concretas.</span>
     <span data-i18n="en">Personal data whose improper disclosure could seriously harm a person's privacy and dignity; it may only be processed with explicit consent or under specific legal exceptions.</span>
   </p>
@@ -1105,7 +1181,7 @@
     <span class="pill"><span data-i18n="es">Salud</span><span data-i18n="en">Health</span></span>
   </div>
 
-  <p style="margin-top:40px;color:var(--ink-dim);font-size:1rem;max-width:640px;">
+  <p style="margin-top:40px;color:var(--ink-dim);font-size:1rem;max-width:100%;">
     <span data-i18n="es">Las infracciones más graves pueden acarrear multas de hasta 20 millones de euros o el 4 % de la facturación anual de la empresa, junto con otras medidas correctivas como advertencias o reprimendas.</span>
     <span data-i18n="en">The most serious infringements can carry fines of up to €20 million or 4% of a company's annual turnover, alongside other corrective measures such as warnings or reprimands.</span>
   </p>
@@ -1175,15 +1251,7 @@
 
 <footer>
   <div class="inner">
-    <div>
-      <p>
-        <span data-i18n="es">Contenido elaborado a partir de los apuntes <em>"UT1. Sistemas de almacenamiento de la información"</em> (Base de datos, 1º DAM — Marina Preciados Agapito) y de los materiales de <a href="https://aitor-medrano.github.io/bd/01intro.html" target="_blank" rel="noopener">Aitor Medrano — Bases de datos</a>, con edición y ampliación bilingüe.</span>
-        <span data-i18n="en">Built from the slides <em>"UT1. Information storage systems"</em> (Databases, 1st year DAM — Marina Preciados Agapito) and the notes by <a href="https://aitor-medrano.github.io/bd/01intro.html" target="_blank" rel="noopener">Aitor Medrano — Bases de datos</a>, expanded and translated.</span>
-      </p>
-    </div>
-    <div>
-      <p><span data-i18n="es">Materiales originales bajo licencia </span><span data-i18n="en">Original materials under a </span><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a><span data-i18n="es"> (Aitor Medrano, 2024–2026).</span><span data-i18n="en"> licence (Aitor Medrano, 2024–2026).</span></p>
-    </div>
+   
   </div>
 </footer>
 
@@ -1204,5 +1272,39 @@ function setLang(lang){
 })();
 </script>
 
+
+<script>
+(function(){
+  var body = document.body;
+  var tg = document.querySelector('.sidebar-toggle');
+  var bd = document.querySelector('.sidebar-backdrop');
+  var sb = document.querySelector('.sidebar');
+  if(!tg || !bd || !sb) return;
+  var KEY = 'bbdd-sidebar';
+  function isNarrow(){ return window.matchMedia('(max-width:880px)').matches; }
+  function setCollapsed(collapsed, remember){
+    body.classList.toggle('sidebar-collapsed', collapsed);
+    if(remember){
+      try{ localStorage.setItem(KEY, collapsed ? 'collapsed' : 'open'); }catch(e){}
+    }
+  }
+  var saved = null;
+  try{ saved = localStorage.getItem(KEY); }catch(e){}
+  if(saved === 'collapsed' || saved === 'open'){
+    setCollapsed(saved === 'collapsed', false);
+  } else {
+    setCollapsed(isNarrow(), false);
+  }
+  tg.addEventListener('click', function(){
+    setCollapsed(!body.classList.contains('sidebar-collapsed'), true);
+  });
+  bd.addEventListener('click', function(){ setCollapsed(true, true); });
+  sb.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      if(isNarrow()){ setCollapsed(true, true); }
+    });
+  });
+})();
+</script>
 </body>
 </html>

@@ -9,25 +9,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #1b1b1b;
-    --bg-alt: #232323;
-    --panel: #292929;
-    --line: #3d3d3d;
+    --bg: #262626;
+    --bg-alt: #2e2e2e;
+    --panel: #333333;
+    --line: #4a4a4a;
     --ink: #ece9e0;
     --ink-soft: #a6acc4;
-    --ink-dim: #767c98;
+    --ink-dim: #8a90ac;
     --clay: #3acfba;
     --clay-soft: #a9ecdf;
     --teal: #49a89c;
     --teal-soft: #bfe3dd;
     --paper: #e7ddc6;
     --paper-ink: #2b2416;
-    --max: 780px;
-    --maxw: 1180px;
+    --max: min(90vw, 1400px);
+    --maxw: min(96vw, 1800px);
     --radius: 3px;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth; font-size:18px;}
   body{
     margin:0;
     background:var(--bg);
@@ -35,6 +35,7 @@
     font-family:'Inter',system-ui,sans-serif;
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
+    font-size:1.25rem;
   }
   ::selection{background:var(--clay);color:#12211e;}
 
@@ -95,9 +96,9 @@
     display:block;
   }
   .lede{
-    font-size:1.18rem;
+    font-size:1.25rem;
     color:var(--ink-soft);
-    max-width:640px;
+    max-width:100%;
   }
 
   header.hero{
@@ -112,11 +113,11 @@
   .hero-inner{max-width:var(--maxw); margin:0 auto; position:relative; z-index:2;}
   .hero h1{
     font-size:clamp(2.2rem, 5.4vw, 4rem);
-    max-width:18ch;
+    max-width:100%;
     color:var(--ink);
   }
   .hero h1 em{font-style:italic; color:var(--clay);}
-  .hero .lede{margin-top:22px; font-size:1.2rem;}
+  .hero .lede{margin-top:22px; font-size:1.25rem;}
   .hero .byline{
     margin-top:26px;
     font-family:'Spline Sans Mono',monospace;
@@ -151,6 +152,11 @@
     border-bottom:1px solid var(--line); padding:10px 14px;
   }
   tbody td{padding:14px; border-bottom:1px solid var(--line); color:var(--ink-soft); vertical-align:top;}
+  tr.tri-row td{
+    font-family:'Spline Sans Mono',monospace; font-size:15px; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--clay-soft); background:var(--bg-alt);
+    padding:16px 14px 8px; border-bottom:none;
+  }
   tbody tr:hover td{color:var(--ink);}
   td strong{color:var(--ink);}
 
@@ -199,53 +205,130 @@
 
   footer{padding:60px 24px 80px; border-top:1px solid var(--line);}
   footer .inner{max-width:var(--maxw); margin:0 auto; display:flex; justify-content:space-between; gap:30px; flex-wrap:wrap;}
-  footer p{color:var(--ink-dim); font-size:1rem; max-width:600px;}
+  footer p{color:var(--ink-dim); font-size:1.25rem; max-width:100%;}
   footer a{color:var(--ink-soft);}
 
   mark{background:none; color:var(--clay); font-weight:600;}
 </style>
 
+
 <style>
-  .site-nav{
-    position:fixed; top:0; left:0; right:0; z-index:999;
-    display:flex; gap:14px; align-items:center; flex-wrap:wrap;
-    background:rgba(15,15,15,.92); backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--line, #3d3d3d);
-    padding:10px 20px;
-    font-family:'Spline Sans Mono',monospace;
-    font-size:14px;
+  /* Hardcoded colors on purpose (no var(--...) lookups): some pages, like the
+     bright résumé deck, redefine --ink/--line/--bg-alt for their own theme,
+     and the sidebar must stay visually identical everywhere. */
+  .sidebar{
+    position:fixed; top:0; left:0; bottom:0; width:252px;
+    background:#1f2020; border-right:1px solid #3d3d3d;
+    overflow-y:auto; padding:26px 18px 30px; z-index:100000;
+    font-family:'Inter',system-ui,sans-serif;
   }
-  .site-nav a{
-    color:var(--ink-dim, #767c98); text-decoration:none; padding:4px 2px;
+  .sidebar::-webkit-scrollbar{width:8px;}
+  .sidebar::-webkit-scrollbar-thumb{background:#3d3d3d; border-radius:4px;}
+  .sidebar .brand{
+    font-family:'Fraunces',serif; font-weight:700; color:#ece9e0;
+    font-size:1.15rem; display:block; margin:2px 6px 2px;
   }
-  .site-nav a:hover{color:var(--clay-soft, #a9ecdf);}
-  .site-nav a.active{color:var(--clay, #3acfba); font-weight:600;}
-  .site-nav .sep{color:var(--line, #3d3d3d);}
-  body{padding-top:44px;}
-  nav.toc{top:44px;}
+  .sidebar .brand-sub{
+    font-family:'Spline Sans Mono',monospace; font-size:12px; color:#767c98;
+    letter-spacing:.04em; display:block; margin:0 6px 26px;
+  }
+  .sidebar nav{display:flex; flex-direction:column; gap:1px;}
+  .sidebar a{
+    display:block; padding:8px 10px; border-radius:4px; font-size:14.5px;
+    color:#a6acc4; text-decoration:none; line-height:1.35;
+  }
+  .sidebar a:hover{background:rgba(255,255,255,.07); color:#a9ecdf;}
+  .sidebar a.active{background:rgba(58,207,186,.16); color:#3acfba; font-weight:600;}
+  .sidebar .group-label{
+    font-family:'Spline Sans Mono',monospace; font-size:11.5px; letter-spacing:.07em;
+    text-transform:uppercase; color:#767c98; margin:22px 0 6px; padding:0 10px;
+  }
+  .sidebar .group-label:first-of-type{margin-top:4px;}
+  .sidebar .ut-group{margin-bottom:1px;}
+  .sidebar .ut-group > a{font-weight:600;}
+  .sidebar .ut-children{
+    display:flex; flex-direction:column; padding-left:14px; margin:2px 0 6px 20px;
+    border-left:1px solid #3d3d3d;
+  }
+  .sidebar .ut-children a{font-size:13.5px; padding:6px 10px; font-weight:400;}
+  .sidebar a.pending{color:#767c98; cursor:default; opacity:.55;}
+  .sidebar a.pending:hover{background:none; color:#767c98;}
+
+  .sidebar{transition:transform .22s ease;}
+  .sidebar-toggle{
+    display:flex; position:fixed; top:12px; left:12px; z-index:100001;
+    width:42px; height:42px; border-radius:8px;
+    background:#292929; border:1px solid #3d3d3d;
+    color:#ece9e0; font-size:18px; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .sidebar-toggle:hover{background:#333;}
+  .sidebar-backdrop{display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:99999;}
+  body{margin-left:252px !important; transition:margin-left .22s ease;}
+
+  /* body.sidebar-collapsed = the user (or the responsive default) hid the menu.
+     On wide screens, hiding it reclaims the space; on narrow screens the menu
+     is an overlay, so content never shifts and a backdrop dims the page. */
+  body.sidebar-collapsed{margin-left:0 !important;}
+  body.sidebar-collapsed .sidebar{
+    transform:translateX(-100%);
+    box-shadow:none;
+  }
+
+  @media(max-width:880px){
+    body{margin-left:0 !important;}
+    .sidebar{
+      transform:translateX(-100%);
+      box-shadow:0 0 40px rgba(0,0,0,.55);
+    }
+    body:not(.sidebar-collapsed) .sidebar{transform:translateX(0);}
+    body:not(.sidebar-collapsed) .sidebar-backdrop{display:block;}
+  }
+
 </style>
 </head>
-<body><nav class="site-nav"><a href="index.html">← Portal</a></nav>
+<body>
+<button class="sidebar-toggle" aria-label="Abrir menú">☰</button>
+<div class="sidebar-backdrop"></div>
+<aside class="sidebar">
+  <span class="brand">Bases de datos</span>
+  <span class="brand-sub">0484 · 1º DAM bilingüe</span>
+  <nav>
+    
+    <a href="index.html">Portal</a>
+    <a href="modulo.html">Módulo</a>
+    
+    <span class="group-label">Unidades de trabajo</span>
+    <div class="ut-group"><a href="ut1/teoria.html">UT1</a>
+      <div class="ut-children">
+        <a href="ut1/teoria.html">📖 Teoría</a>
+        <a href="ut1/actividades.html">📝 Actividades</a>
+        <a href="ut1/resumen.html">🎛️ Resumen</a>
+      </div></div><a class="pending" title="Próximamente">UT2 · próximamente</a><a class="pending" title="Próximamente">UT3 · próximamente</a><a class="pending" title="Próximamente">UT4 · próximamente</a><a class="pending" title="Próximamente">UT5 · próximamente</a><a class="pending" title="Próximamente">UT6 · próximamente</a><a class="pending" title="Próximamente">UT7 · próximamente</a><a class="pending" title="Próximamente">UT8 · próximamente</a>
+  </nav>
+</aside>
 
 <nav class="toc">
   <div class="inner">
     <span class="brand">0484</span>
+    <a href="modulo.html">Módulo</a>
     <a href="#resumen">Resumen</a>
-    <a href="#ut01">UT1</a>
-    <a href="#ut02">UT2</a>
-    <a href="#ut03">UT3</a>
-    <a href="#ut04">UT4</a>
-    <a href="#ut05">UT5</a>
-    <a href="#ut06">UT6</a>
-    <a href="#ut07">UT7</a>
+    <a href="#ut1">UT1</a>
+    <a href="#ut2">UT2</a>
+    <a href="#ut3">UT3</a>
+    <a href="#ut4">UT4</a>
+    <a href="#ut5">UT5</a>
+    <a href="#ut6">UT6</a>
+    <a href="#ut7">UT7</a>
+    <a href="#ut8">UT8</a>
   </div>
 </nav>
 
 <header class="hero">
   <div class="hero-inner">
-    <span class="kicker">Bases de datos (0484) · 1º DAM bilingüe · RD 405/2023</span>
+    <span class="kicker">Bases de datos (0484) · 1º DAM bilingüe · IES Albarregas</span>
     <h1>Programación de <em>Unidades de Trabajo</em></h1>
-    <p class="lede">Una unidad de trabajo por cada resultado de aprendizaje (RA1–RA7), alineada con los siete bloques de contenidos del módulo y con los criterios de evaluación oficiales.</p>
+    <p class="lede">Las 8 unidades de trabajo del módulo, con su resultado de aprendizaje, bloque de contenidos y criterios de evaluación oficiales — en el orden real de impartición, por trimestre.</p>
     <p class="byline">Marina Preciados Agapito</p>
   </div>
 </header>
@@ -254,93 +337,88 @@
   <div class="sec-head">
     <div>
       <span class="sec-num">VISIÓN GENERAL</span>
-      <h2>Las 7 unidades, de un vistazo</h2>
+      <h2>Las 8 unidades, de un vistazo</h2>
     </div>
-    <p class="lede" style="margin:0;max-width:420px;">160 h de referencia en total — ajusta la columna de horas a tu carga lectiva real; el reparto es proporcional.</p>
+    <p class="lede" style="margin:0;max-width:100%;">190 h repartidas en 3 trimestres, sobre 192 h de carga lectiva total (6 h/semana).</p>
   </div>
   <table>
     <thead>
-      <tr><th>Unidad</th><th>Título</th><th>Bloque</th><th>Horas orient.</th><th>Material</th></tr>
+      <tr><th>Unidad</th><th>Título</th><th>Bloque</th><th>Horas</th><th>Material</th></tr>
     </thead>
     <tbody>
-      <tr>
-      <td><strong>UT01</strong> · RA1</td>
-      <td>Almacenamiento de la información</td>
+      <tr class="tri-row"><td colspan="5">Primer trimestre</td></tr>
+<tr>
+      <td><strong>UT1</strong> · RA1</td>
+      <td>Sistemas de almacenamiento de la información</td>
       <td>B1</td>
       <td>16 h</td>
       <td>✓ ya elaborada</td>
     </tr>
 <tr>
-      <td><strong>UT06</strong> · RA6</td>
+      <td><strong>UT2</strong> · RA6</td>
       <td>Interpretación de diagramas entidad/relación</td>
       <td>B6</td>
-      <td>24 h</td>
+      <td>20 h</td>
       <td>—</td>
     </tr>
 <tr>
-      <td><strong>UT02</strong> · RA2</td>
+      <td><strong>UT3</strong> · RA2</td>
       <td>Bases de datos relacionales</td>
       <td>B2</td>
       <td>29 h</td>
       <td>—</td>
     </tr>
+<tr class="tri-row"><td colspan="5">Segundo trimestre</td></tr>
 <tr>
-      <td><strong>UT03</strong> · RA3</td>
+      <td><strong>UT4</strong> · RA3</td>
       <td>Realización de consultas</td>
+      <td>B3</td>
+      <td>30 h</td>
+      <td>—</td>
+    </tr>
+<tr>
+      <td><strong>UT5</strong> · RA3</td>
+      <td>Realización de consultas avanzadas</td>
       <td>B3</td>
       <td>35 h</td>
       <td>—</td>
     </tr>
+<tr class="tri-row"><td colspan="5">Tercer trimestre</td></tr>
 <tr>
-      <td><strong>UT04</strong> · RA4</td>
+      <td><strong>UT6</strong> · RA4</td>
       <td>Tratamiento de datos</td>
       <td>B4</td>
       <td>24 h</td>
       <td>—</td>
     </tr>
 <tr>
-      <td><strong>UT05</strong> · RA5</td>
+      <td><strong>UT7</strong> · RA5</td>
       <td>Programación de bases de datos</td>
       <td>B5</td>
-      <td>24 h</td>
+      <td>26 h</td>
       <td>—</td>
     </tr>
 <tr>
-      <td><strong>UT07</strong> · RA7</td>
+      <td><strong>UT8</strong> · RA7</td>
       <td>Uso de bases de datos no relacionales</td>
       <td>B7</td>
-      <td>8 h</td>
+      <td>10 h</td>
       <td>—</td>
     </tr>
-    </tbody>
-  </table>
-
-  <h3 style="margin-top:60px;">Orden de impartición sugerido</h3>
-  <p class="lede" style="margin-top:6px;max-width:680px;">Los RA no tienen por qué darse en su orden numérico. Diseñar antes de consultar es más lógico pedagógicamente: primero se entiende qué es una base de datos, luego se diseña (E/R → relacional) y sólo entonces se consulta y se modifica.</p>
-  <table class="order-table">
-    <thead><tr><th>Orden</th><th>Unidad</th><th>Motivo</th></tr></thead>
-    <tbody>
-      <tr><td>1</td><td>UT1 · RA1</td><td>Contexto y vocabulario básico: sin esto, nada más tiene anclaje.</td></tr>
-      <tr><td>2</td><td>UT6 · RA6</td><td>El diseño conceptual (E/R) precede a cualquier base de datos real.</td></tr>
-      <tr><td>3</td><td>UT2 · RA2</td><td>Del diagrama E/R a tablas, claves y restricciones ya construibles.</td></tr>
-      <tr><td>4</td><td>UT3 · RA3</td><td>Con tablas ya creadas, tiene sentido empezar a consultarlas.</td></tr>
-      <tr><td>5</td><td>UT4 · RA4</td><td>Modificar datos y gestionar transacciones, una vez se sabe consultar.</td></tr>
-      <tr><td>6</td><td>UT5 · RA5</td><td>Automatizar con procedimientos lo que ya se sabe hacer a mano.</td></tr>
-      <tr><td>7</td><td>UT7 · RA7</td><td>Cierre comparativo: qué cambia en un modelo no relacional.</td></tr>
     </tbody>
   </table>
 </section>
 
 
-<section id="ut01" class="">
+<section id="ut1" class="">
   <div class="sec-head">
     <div>
-      <span class="sec-num">UT01 · RA1 · Bloque B1</span>
-      <h2>Almacenamiento de la información</h2>
+      <span class="sec-num">UT1 · RA1 · Bloque B1 · Primer trimestre</span>
+      <h2>Sistemas de almacenamiento de la información</h2>
     </div>
-    <p class="lede" style="margin:0;max-width:360px;">16 h orientativas · orden sugerido 1/7</p>
+    <p class="lede" style="margin:0;max-width:100%;">16 h</p>
   </div>
-  <span class="status-pill">Ya elaborada: teoría, actividades y presentación-resumen bilingües listas en el proyecto.</span>
+  <span class="status-pill">Ya elaborada: teoría, actividades y presentación-resumen bilingües listas en el portal.</span>
   <div class="prose">
     <p class="ra-quote">&ldquo;Reconoce los elementos de las bases de datos analizando sus funciones y valorando la utilidad de los sistemas gestores.&rdquo;</p>
   </div>
@@ -373,13 +451,53 @@
   </div>
 </section>
 
-<section id="ut02" class="panel-section">
+<section id="ut2" class="panel-section">
   <div class="sec-head">
     <div>
-      <span class="sec-num">UT02 · RA2 · Bloque B2</span>
+      <span class="sec-num">UT2 · RA6 · Bloque B6 · Primer trimestre</span>
+      <h2>Interpretación de diagramas entidad/relación</h2>
+    </div>
+    <p class="lede" style="margin:0;max-width:100%;">20 h</p>
+  </div>
+  
+  <div class="prose">
+    <p class="ra-quote">&ldquo;Diseña modelos relacionales normalizados interpretando diagramas entidad/relación.&rdquo;</p>
+  </div>
+
+  <div class="grid cols-2" style="margin-top:36px;align-items:start;">
+    <div>
+      <span class="block-label">Contenidos (Bloque B6)</span>
+      <ul class="content-list">
+        <li>El modelo E/R: entidades y relaciones, cardinalidades, debilidad.</li>
+<li>El modelo E/R ampliado: generalización y especialización, agregación.</li>
+<li>Paso del diagrama E/R al modelo relacional.</li>
+<li>Restricciones semánticas del modelo relacional.</li>
+<li>Normalización de modelos relacionales.</li>
+      </ul>
+    </div>
+    <div>
+      <span class="block-label">Criterios de evaluación</span>
+      <ol class="ce-list">
+        <li>Se han utilizado herramientas gráficas para representar el diseño lógico.</li>
+<li>Se han identificado las tablas del diseño lógico.</li>
+<li>Se han identificado los campos que forman parte de las tablas del diseño lógico.</li>
+<li>Se han analizado las relaciones entre las tablas del diseño lógico.</li>
+<li>Se han identificado los campos clave.</li>
+<li>Se han aplicado reglas de integridad.</li>
+<li>Se han aplicado reglas de normalización.</li>
+<li>Se han analizado y documentado las restricciones que no pueden plasmarse en el diseño lógico.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="ut3" class="">
+  <div class="sec-head">
+    <div>
+      <span class="sec-num">UT3 · RA2 · Bloque B2 · Primer trimestre</span>
       <h2>Bases de datos relacionales</h2>
     </div>
-    <p class="lede" style="margin:0;max-width:360px;">29 h orientativas · orden sugerido 3/7</p>
+    <p class="lede" style="margin:0;max-width:100%;">29 h</p>
   </div>
   
   <div class="prose">
@@ -418,13 +536,13 @@
   </div>
 </section>
 
-<section id="ut03" class="">
+<section id="ut4" class="panel-section">
   <div class="sec-head">
     <div>
-      <span class="sec-num">UT03 · RA3 · Bloque B3</span>
+      <span class="sec-num">UT4 · RA3 · Bloque B3 · Segundo trimestre</span>
       <h2>Realización de consultas</h2>
     </div>
-    <p class="lede" style="margin:0;max-width:360px;">35 h orientativas · orden sugerido 4/7</p>
+    <p class="lede" style="margin:0;max-width:100%;">30 h</p>
   </div>
   
   <div class="prose">
@@ -439,7 +557,37 @@
 <li>Operadores de comparación y operadores lógicos.</li>
 <li>Consultas de resumen.</li>
 <li>Agrupamiento de registros.</li>
-<li>Composiciones internas.</li>
+      </ul>
+    </div>
+    <div>
+      <span class="block-label">Criterios de evaluación</span>
+      <ol class="ce-list">
+        <li>Se han identificado las herramientas y sentencias para realizar consultas.</li>
+<li>Se han realizado consultas simples sobre una tabla.</li>
+<li>Se han realizado consultas resumen.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="ut5" class="">
+  <div class="sec-head">
+    <div>
+      <span class="sec-num">UT5 · RA3 · Bloque B3 · Segundo trimestre</span>
+      <h2>Realización de consultas avanzadas</h2>
+    </div>
+    <p class="lede" style="margin:0;max-width:100%;">35 h</p>
+  </div>
+  <span class="status-pill">Continúa el RA3 empezado en UT4, con las consultas más complejas.</span>
+  <div class="prose">
+    <p class="ra-quote">&ldquo;Consulta la información almacenada en una base de datos empleando asistentes, herramientas gráficas y el lenguaje de manipulación de datos.&rdquo;</p>
+  </div>
+
+  <div class="grid cols-2" style="margin-top:36px;align-items:start;">
+    <div>
+      <span class="block-label">Contenidos (Bloque B3)</span>
+      <ul class="content-list">
+        <li>Composiciones internas.</li>
 <li>Composiciones externas.</li>
 <li>Subconsultas.</li>
 <li>Combinación de múltiples selecciones.</li>
@@ -449,24 +597,21 @@
     <div>
       <span class="block-label">Criterios de evaluación</span>
       <ol class="ce-list">
-        <li>Se han identificado las herramientas y sentencias para realizar consultas.</li>
-<li>Se han realizado consultas simples sobre una tabla.</li>
-<li>Se han realizado consultas sobre el contenido de varias tablas mediante composiciones internas.</li>
+        <li>Se han realizado consultas sobre el contenido de varias tablas mediante composiciones internas.</li>
 <li>Se han realizado consultas sobre el contenido de varias tablas mediante composiciones externas.</li>
-<li>Se han realizado consultas resumen.</li>
 <li>Se han realizado consultas con subconsultas.</li>
       </ol>
     </div>
   </div>
 </section>
 
-<section id="ut04" class="panel-section">
+<section id="ut6" class="panel-section">
   <div class="sec-head">
     <div>
-      <span class="sec-num">UT04 · RA4 · Bloque B4</span>
+      <span class="sec-num">UT6 · RA4 · Bloque B4 · Tercer trimestre</span>
       <h2>Tratamiento de datos</h2>
     </div>
-    <p class="lede" style="margin:0;max-width:360px;">24 h orientativas · orden sugerido 5/7</p>
+    <p class="lede" style="margin:0;max-width:100%;">24 h</p>
   </div>
   
   <div class="prose">
@@ -500,13 +645,13 @@
   </div>
 </section>
 
-<section id="ut05" class="">
+<section id="ut7" class="">
   <div class="sec-head">
     <div>
-      <span class="sec-num">UT05 · RA5 · Bloque B5</span>
+      <span class="sec-num">UT7 · RA5 · Bloque B5 · Tercer trimestre</span>
       <h2>Programación de bases de datos</h2>
     </div>
-    <p class="lede" style="margin:0;max-width:360px;">24 h orientativas · orden sugerido 6/7</p>
+    <p class="lede" style="margin:0;max-width:100%;">26 h</p>
   </div>
   
   <div class="prose">
@@ -544,57 +689,17 @@
   </div>
 </section>
 
-<section id="ut06" class="panel-section">
+<section id="ut8" class="panel-section">
   <div class="sec-head">
     <div>
-      <span class="sec-num">UT06 · RA6 · Bloque B6</span>
-      <h2>Interpretación de diagramas entidad/relación</h2>
-    </div>
-    <p class="lede" style="margin:0;max-width:360px;">24 h orientativas · orden sugerido 2/7</p>
-  </div>
-  
-  <div class="prose">
-    <p class="ra-quote">&ldquo;Diseña modelos relacionales normalizados interpretando diagramas entidad/relación.&rdquo;</p>
-  </div>
-
-  <div class="grid cols-2" style="margin-top:36px;align-items:start;">
-    <div>
-      <span class="block-label">Contenidos (Bloque B6)</span>
-      <ul class="content-list">
-        <li>El modelo E/R: entidades y relaciones, cardinalidades, debilidad.</li>
-<li>El modelo E/R ampliado: generalización y especialización, agregación.</li>
-<li>Paso del diagrama E/R al modelo relacional.</li>
-<li>Restricciones semánticas del modelo relacional.</li>
-<li>Normalización de modelos relacionales.</li>
-      </ul>
-    </div>
-    <div>
-      <span class="block-label">Criterios de evaluación</span>
-      <ol class="ce-list">
-        <li>Se han utilizado herramientas gráficas para representar el diseño lógico.</li>
-<li>Se han identificado las tablas del diseño lógico.</li>
-<li>Se han identificado los campos que forman parte de las tablas del diseño lógico.</li>
-<li>Se han analizado las relaciones entre las tablas del diseño lógico.</li>
-<li>Se han identificado los campos clave.</li>
-<li>Se han aplicado reglas de integridad.</li>
-<li>Se han aplicado reglas de normalización.</li>
-<li>Se han analizado y documentado las restricciones que no pueden plasmarse en el diseño lógico.</li>
-      </ol>
-    </div>
-  </div>
-</section>
-
-<section id="ut07" class="">
-  <div class="sec-head">
-    <div>
-      <span class="sec-num">UT07 · RA7 · Bloque B7</span>
+      <span class="sec-num">UT8 · RA7 · Bloque B7 · Tercer trimestre</span>
       <h2>Uso de bases de datos no relacionales</h2>
     </div>
-    <p class="lede" style="margin:0;max-width:360px;">8 h orientativas · orden sugerido 7/7</p>
+    <p class="lede" style="margin:0;max-width:100%;">10 h</p>
   </div>
   
   <div class="prose">
-    <p class="ra-quote">&ldquo;Gestiona la información almacenada en bases de datos no relacionales, evaluando y utilizando las posibilidades que proporciona el sistema gestor.&rdquo;</p>
+    <p class="ra-quote">&ldquo;Gestiona la información almacenada en bases de datos objeto-relacionales, evaluando y utilizando las posibilidades que proporciona el sistema gestor.&rdquo;</p>
   </div>
 
   <div class="grid cols-2" style="margin-top:36px;align-items:start;">
@@ -624,13 +729,47 @@
 <footer>
   <div class="inner">
     <div>
-      <p>Unidades de trabajo elaboradas a partir de los resultados de aprendizaje, criterios de evaluación y bloques de contenido del módulo <em>Bases de datos</em> (0484), Real Decreto 405/2023, de 29 de mayo (BOE-A-2023-13221) — Marina Preciados Agapito, 1º DAM bilingüe.</p>
+      <p>Unidades de trabajo del módulo <em>Bases de datos</em> (0484), IES Albarregas — 1º DAM bilingüe. Contenidos y horas según la programación oficial del módulo; resultados de aprendizaje y criterios de evaluación conforme al currículo de referencia.</p>
     </div>
     <div>
-      <p>Las horas orientativas son una propuesta de reparto proporcional sobre un total de referencia de 160 h; sustitúyelas por la carga horaria oficial de tu programación en Extremadura.</p>
+      <p>Ver también la <a href="modulo.html">presentación del módulo</a>: horario, metodología y resultados de aprendizaje completos.</p>
     </div>
   </div>
 </footer>
 
+
+<script>
+(function(){
+  var body = document.body;
+  var tg = document.querySelector('.sidebar-toggle');
+  var bd = document.querySelector('.sidebar-backdrop');
+  var sb = document.querySelector('.sidebar');
+  if(!tg || !bd || !sb) return;
+  var KEY = 'bbdd-sidebar';
+  function isNarrow(){ return window.matchMedia('(max-width:880px)').matches; }
+  function setCollapsed(collapsed, remember){
+    body.classList.toggle('sidebar-collapsed', collapsed);
+    if(remember){
+      try{ localStorage.setItem(KEY, collapsed ? 'collapsed' : 'open'); }catch(e){}
+    }
+  }
+  var saved = null;
+  try{ saved = localStorage.getItem(KEY); }catch(e){}
+  if(saved === 'collapsed' || saved === 'open'){
+    setCollapsed(saved === 'collapsed', false);
+  } else {
+    setCollapsed(isNarrow(), false);
+  }
+  tg.addEventListener('click', function(){
+    setCollapsed(!body.classList.contains('sidebar-collapsed'), true);
+  });
+  bd.addEventListener('click', function(){ setCollapsed(true, true); });
+  sb.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      if(isNarrow()){ setCollapsed(true, true); }
+    });
+  });
+})();
+</script>
 </body>
 </html>
